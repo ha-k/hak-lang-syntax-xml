@@ -1,2 +1,6 @@
 # hak-lang-syntax-xml
-Java package sources implementing the [hak.language.syntax.xml](https://hassan-ait-kaci.net/hlt/doc/hlt/api/hlt/language/syntax/xml/package-summary.html) API
+Java package sources implementing the JACC [hak.language.syntax.xml](https://www.researchgate.net/publication/333079747_A_Generic_XML-Generating_Metacompiler) API
+
+Full example of use of XML serialization described in the above technical report:
+
+https://hassan-ait-kaci.net/hlt/src/hlt/language/jaccapps/xml/docs/XmlGenExDoc/000StartHere.html
