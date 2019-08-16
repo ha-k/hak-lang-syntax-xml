@@ -1,0 +1,437 @@
+// FILE. . . . . /home/hak/hlt/src/hlt/language/syntax/xml/XmlAnnotation.grm
+// EDIT BY . . . Hassan Ait-Kaci
+// ON MACHINE. . 4j4zn71
+// STARTED ON. . Fri Mar 16 18:13:06 2007
+
+// Last modified on Tue Jun 19 18:00:21 2012 by hak
+
+/**
+ * <font size="-1"color="red"><b><tt>
+ * [Description generated from file <a
+ * href="XmlAnnotationSpecification.html"><tt>XmlAnnotationSpecification.grm</tt></a>]
+ * </tt></b></font>
+ */
+
+////////////////////////////////////////////////////////////////////////
+
+%package hlt.language.syntax.xml;
+
+%import java.util.Iterator;
+%import hlt.language.tools.Misc;
+%import hlt.language.util.ArrayList;
+%import hlt.language.util.IntArrayList;
+%import hlt.language.syntax.XmlWrapper;
+
+/**
+ * Including file <a href="XmlAnnotationNodeClasses.html"><tt>XmlAnnotationNodeClasses.grm</tt></a>
+ * defining some fields and methods for some non-terminal nodes
+ * used in the grammar's semantic actions.
+ */
+%include "XmlAnnotationNodeClasses.grm"
+/**
+ * Including file <a href="XmlAnnotationSpecification.html"><tt>XmlAnnotationSpecification.grm</tt></a>
+ * containg the documentation describing the logical design for <tt>Jacc</tt>'s
+ * XML serialization annotation notation.
+ */
+%include "XmlAnnotationSpecification.grm"
+
+%access public
+
+%start XmlAnnotation
+
+%token DOT STAR SLASH
+%token POSITION SYMBOL TEXT VALUE NSPREFIX LOCALNAME ATTRIBUTES CHILDREN LISTSEP KEYVALSEP
+
+/**
+ * <font size="-1"color="red"><b><tt>
+ * [See also <a
+ * href="XmlAnnotationParserCode.html"><tt>XmlAnnotationParserCode.grm</tt></a>]
+ * </tt></b></font>
+ */
+%include "XmlAnnotationParserCode.grm"
+
+%%
+
+XmlAnnotation
+  : AnnotationPairs
+  ;
+
+AnnotationPairs
+  : /* empty */
+  | AnnotationPairs AnnotationPair
+  ;
+
+AnnotationPair
+  : NSPrefixPair
+  | LocalNamePair
+  | AttributesPair
+  | ChildrenPair
+  ;
+
+NSPrefixPair
+  : NSPrefixKey NSPrefixValue
+  ;
+
+NSPrefixKey
+  : NSPREFIX KeyValSep_opt
+  ;
+
+NSPrefixValue
+  : SYMBOL
+  { nsPrefix = $1.svalue(); }
+  ;
+
+LocalNamePair
+  : LocalNameKey LocalNameValue
+  ;
+
+LocalNameKey
+  : LOCALNAME KeyValSep_opt
+  ;
+
+LocalNameValue
+  : SYMBOL
+  { localName = $1.svalue(); }
+  ;
+
+AttributesPair
+  : AttributesKey AttributesValue
+  ;
+
+AttributesKey
+  : ATTRIBUTES KeyValSep_opt
+  ;
+
+AttributesValue
+  : '{' Attributes '}'
+  ;
+
+Attributes
+  : Attribute
+  | Attributes ListSep_opt Attribute
+  ;
+
+Attribute
+  : SYMBOL KeyValSep_opt AttributeValue
+  {
+    XmlAttributeInfo info = null;
+    String key = $1.svalue();
+    
+    if ($3.hasLiteralValueContent)
+      info = XmlAttributeInfo.literalXmlAttributeInfo(key,$3.value);
+    else
+      if ($3.hasTerminalValueContent)
+	info = new XmlAttributeInfo(key);
+      else
+	if ($3.textInfo != null)
+	  info = new XmlAttributeInfo(key,
+				      new XmlSpecialForm($3.textInfo));
+	else
+	  info = new XmlAttributeInfo(key,
+				      $3.cstChildPosition,
+				      $3.xmlPath,
+				      $3.attributeName);
+    
+    attributes.add(info);
+  }
+  ;
+
+ /**
+  * An <tt>$AttributeValue$</tt> may be one of:
+  *
+  * <ol>
+  * <p><li>a <i>special form</i>;
+  *
+  * <p><li>a literal (unquoted, single-quoted, or double-quoted)
+  *        string;
+  *
+  * <p><li>a deep reference into the XML tree of the CST child at
+  *        a given position.
+  *
+  * </ol>
+  *
+  */
+AttributeValue
+  : /**
+     * An attribute value may the <i>special form</i> <tt>'&#36;VALUE'</tt>
+     * or <tt>'&#36;TEXT'</tt>
+     */
+    SpecialForm
+  {
+    $$.hasTerminalValueContent = $1.hasTerminalValueContent;
+    $$.textInfo = $1.textInfo;
+  }
+  | /**
+     * An attribute value may be a literal (unquoted, single-quoted, or
+     * double-quoted) string.
+     */
+    SYMBOL
+  {
+    $$.value = $1.svalue();
+    $$.hasLiteralValueContent = true;
+  }
+  | /**
+     * An attribute value may be a deep reference into the XML tree of
+     * the CST child at <tt>$POSITION$</tt>, optionally followed by an
+     * <tt>$XmlPath$</tt>. Then comes an optional <tt>$AttributeName$</tt>
+     * consisting of a slash <tt>'/'</tt> followed by an unquoted,
+     * single-quoted, or double-quoted string denoting an attribute name
+     * in the referenced XML subtree.
+     */
+    POSITION XmlPath_opt AttributeName_opt
+  {
+    $$.cstChildPosition = (int)$1.nvalue();
+    $$.xmlPath = $2.xmlPath;
+    $$.attributeName = $3.attributeName;
+  }
+  ;
+
+/**
+ * A <tt>$SpecialForm$</tt> is introduced with a dollar sign
+ * (<tt>'&#36;'</tt>) followed by specially interpreted contents; at
+ * present the available special forms are:
+ *
+ * <ul>
+ * <p><li> the identifier <tt>value</tt>, in which case the CST
+ *         node it refers to must be a terminal;
+ * <p><li> the identifier <tt>text</tt>; followed with a sequence
+ *         of arguments, each being wither a $SYMBOL$ (<i>i.e.</i>, a
+ *         string literal (possibly single or double-quoted), or an
+ *         expression of the form <tt>n/attr</tt>, this being a
+ *         reference to the contents of attribute <i>attr</i> of the XML
+ *         element for RHS position <i>n</i>.
+ * </ul>
+ */
+SpecialForm
+  : VALUE
+  {
+    $$.hasTerminalValueContent = true;
+  }
+  | TEXT '(' TextArguments ')'
+  {
+    $$.textInfo = $3.textInfo;
+  }
+  ;
+
+TextArguments
+  : TextArgument
+  {
+    ($$.textInfo = new ArrayList()).add($1.info);
+  }
+  | TextArguments ListSep_opt TextArgument
+  {
+    ($$.textInfo = $1.textInfo).add($3.info);
+  }
+  ;
+
+TextArgument
+  : SYMBOL
+  {
+    ($$.info = new XmlTextInfoArg()).setText($1.svalue());
+  }
+  | TextRef
+  {
+    $$.info = $1.info;
+  }
+  ;
+
+/**
+ * A <tt>TextRef</tt> denotes a reference to some text located
+ * in the XML tree that has been built for a child CST.
+ */
+TextRef
+  : ChildXmlTree AttributeName_opt
+  {
+    $$.info = new XmlTextInfoArg($1.cstChildPosition,
+				 $1.xmlPath,
+				 $2.attributeName);
+  }
+  ;
+
+AttributeName
+  : SLASH SYMBOL
+  {
+    $$.attributeName = $2.svalue();
+  }
+  ;
+
+/**
+ * An <tt>XmlChildSpec</tt> specifies the structure of an XML tree for a
+ * child CST.  When <tt>$WrapperPath_opt$</tt> is not empty, it is a
+ * sequence of <tt>$SYMBOL$</tt>'s each followed by either a dot or an
+ * asterisk. This specifies a path of XML tags: one for each XML layer
+ * to wrap around the resulting XML contents.  A dot triggers a single
+ * element wrap, while an asterisk triggers the wrap to distribute on
+ * the next nesting level's elements, if any.
+ */
+XmlChildSpec
+  : WrapperPath_opt ChildXmlTree
+  {
+    $$.wrapperPath = $1.wrapperPath;    
+    $$.cstChildPosition = $2.cstChildPosition;
+    $$.xmlPath = $2.xmlPath;
+    $$.hasTerminalValueContent = $2.hasTerminalValueContent;
+    $$.textInfo = $2.textInfo;
+  }
+  ;
+  
+/**
+ * A child XML tree denotes the contents on the XML tree being built
+ * for a child CST node.
+ */
+ChildXmlTree
+  : /**
+     * A child XML tree may be a <i>special form</i> starting with a
+     * <tt>'&#36;'</tt>.
+     */
+    SpecialForm
+  {
+    $$.hasTerminalValueContent = $1.hasTerminalValueContent;
+    $$.textInfo = $1.textInfo;
+  }
+  | /**
+     * <tt>$POSITION$</tt> is an <tt>int</tt> (say, <i><tt>n</tt></i>)
+     * and refers to the <i><tt>n</tt></i><sup>th</sup> child CST node.
+     *
+     * <p>
+     *
+     * When <tt>$XmlPath_opt$</tt> is empty, an <tt>ChildXmlTree</tt>
+     * refers to the XML element of the <i><tt>n</tt></i><sup>th</sup>
+     * child CST node.
+     *
+     * <p>
+     *
+     * When <tt>$XmlPath_opt$</tt> is not empty, it is a bracketed,
+     * dot-separated sequence of <tt>$POSITION$</tt>'s (see
+     * <tt>$XmlPath$</tt>). This sequence denotes a tree-address path in
+     * the tree of XML elements, starting from the XML element associated
+     * with the CST node at position <i><tt>n</tt></i>.
+     */
+    POSITION XmlPath_opt
+  {
+    $$.cstChildPosition = (int)$1.nvalue();
+    $$.xmlPath = $2.xmlPath;
+  }
+  ;
+
+WrapperPath_opt
+  : /* empty */
+  | WrapperPath
+  {
+    $$.wrapperPath = $1.wrapperPath;
+  }
+  ;
+
+  /**
+   * A <tt>$WrapperPath$</tt> is a sequence of pairs each made of
+   * <tt>$SYMBOL$</tt>'s followed by either a dot or an asterisk. This
+   * specifies a path of XML tags: one for each XML layer to wrap around
+   * the resulting XML contents.  A dot triggers a single element wrap,
+   * while an asterisk triggers the wrap to distribute on the next
+   * nesting level's elements.
+   */
+WrapperPath
+  : SYMBOL DotOrStar
+  { $$.add($1.svalue(),$2.isStarred); }
+  | WrapperPath SYMBOL DotOrStar
+  { $$.addTo($1.wrapperPath,$2.svalue(),$3.isStarred); }
+  ;
+
+DotOrStar
+  : DOT
+  | STAR
+  { $$.isStarred = true; }
+  ;
+
+/**
+ * A <tt>$XmlPath_opt$</tt> is a possibly empty bracketed
+ * <tt>$XmlPath$</tt>.
+ */
+XmlPath_opt
+  : /* empty */
+  | '[' XmlPath ']'
+  { $$.xmlPath = $2.xmlPath; }
+  ;
+
+/**
+ * An <tt>XmlPath</tt> is either a single positive integer, or a
+ * dot-separated sequence thereof.
+ */
+XmlPath
+  : POSITION
+  { $$.add((int)$1.nvalue()); }
+  | XmlPath DOT POSITION
+  { $$.addTo($1.xmlPath,(int)$3.nvalue()); }
+  ;
+
+ChildrenPair
+  : ChildrenKey ChildrenValue
+  ;
+
+ChildrenKey
+  : CHILDREN KeyValSep_opt
+  ;
+
+/**
+ * A <tt>ChildrenValue</tt> is a parenthesized <tt>$XmlTreeRefs$</tt>.
+ */
+ChildrenValue
+  : '(' XmlTreeRefs ')'
+  ;
+
+/**
+ * An <tt>XmlTreeRefs</tt> is either a single
+ * <tt>$XmlTreeRef$</tt>, or a sequence thereof.
+ */
+XmlTreeRefs
+  : XmlTreeRef
+  {
+    children.add($1.cstChildPosition);
+    xmlPaths.add($1.xmlPath);
+    wrapperPaths.add($1.wrapperPath);
+    attributeNames.add($1.attributeName);
+    terminalValueFlag = $1.hasTerminalValueContent;
+    textInfos.add($1.textInfo);
+  }
+  | XmlTreeRefs ListSep_opt XmlTreeRef
+  {
+    children.add($3.cstChildPosition);
+    xmlPaths.add($3.xmlPath);
+    wrapperPaths.add($3.wrapperPath);
+    attributeNames.add($3.attributeName);
+    terminalValueFlag = $3.hasTerminalValueContent;
+    textInfos.add($3.textInfo);  }
+  ;
+
+XmlTreeRef
+  : XmlChildSpec AttributeName_opt
+  {
+    $$.cstChildPosition = $1.cstChildPosition;
+    $$.xmlPath = $1.xmlPath;
+    $$.wrapperPath = $1.wrapperPath;
+    $$.attributeName = $2.attributeName;
+    $$.hasTerminalValueContent = $1.hasTerminalValueContent;
+    $$.textInfo = $1.textInfo;
+  }
+  ;
+
+AttributeName_opt
+  : /* empty */
+  | AttributeName
+  {
+    $$.attributeName = $1.attributeName;
+  }
+  ;
+
+KeyValSep_opt
+  : /* empty */
+  | KEYVALSEP
+  ;
+
+ListSep_opt
+  : /* empty */
+  | LISTSEP
+  ;
+
+%%
+  

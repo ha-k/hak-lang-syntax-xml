@@ -1,0 +1,258 @@
+<HTML>
+<HEAD>
+<TITLE>
+XmlAnnotationNodeClasses.html
+</TITLE>
+<LINK REL="STYLESHEET" TYPE="text/css" HREF="D:/hak/hlt/classes/resources/Hilite.Style.css">
+</HEAD>
+<BODY BGCOLOR="#CCCFF">
+<CENTER>
+<TABLE BGCOLOR=white WIDTH=50% BORDER=5 CELLPADDING=20>
+<TR><TD ALIGN=CENTER>
+<SPAN STYLE="FONT-SIZE:XX-LARGE"><TT><B>XmlAnnotationNodeClasses.grm</B></TT></SPAN>
+<P>
+</TD></TR>
+</TABLE>
+</CENTER>
+<PRE>
+<SPAN STYLE="COLOR:#88AA66"><EM>// FILE. . . . . /home/hak/hlt/src/hlt/language/syntax/xml/XmlAnnotationNodeClasses.grm
+</EM></SPAN><SPAN STYLE="COLOR:#88AA66"><EM>// EDIT BY . . . Hassan Ait-Kaci
+</EM></SPAN><SPAN STYLE="COLOR:#88AA66"><EM>// ON MACHINE. . 4j4zn71
+</EM></SPAN><SPAN STYLE="COLOR:#88AA66"><EM>// STARTED ON. . Sat Apr 12 18:01:09 2008
+</EM></SPAN>
+<SPAN STYLE="COLOR:#88AA66"><EM>// Last modified on Tue Jun 19 18:03:43 2012 by hak
+</EM></SPAN>
+<SPAN STYLE="COLOR:#88AA66"><EM>////////////////////////////////////////////////////////////////////////
+</EM></SPAN>
+
+</PRE>
+<HR>
+<CENTER>
+<TABLE BGCOLOR="WHITE" WIDTH=90% BORDER=1 CELLPADDING=10>
+<TR><TD><SPAN STYLE="COLOR:BLACK">
+
+  A <tt>$WrapperPath_opt$</tt> stores the sequence of wrappers
+  making up a <tt>$WrapperPath$</tt> in an <tt>ArrayList</tt>
+  called <tt>wrapperPath</tt>.
+ 
+</SPAN></TD></TR>
+</TABLE>
+</CENTER>
+<P>
+<PRE>
+
+%nodeclass <SPAN STYLE="COLOR:#4400DD"><STRONG>WrapperPath_opt</STRONG></SPAN>
+  <SPAN STYLE="COLOR:#444444">{</SPAN>
+    <SPAN STYLE="COLOR:#4400DD"><STRONG>ArrayList</STRONG></SPAN> wrapperPath = <SPAN STYLE="COLOR:GREEN">null</SPAN>;
+  <SPAN STYLE="COLOR:#444444">}</SPAN>
+
+%nodeclass <SPAN STYLE="COLOR:#4400DD"><STRONG>WrapperPath</STRONG></SPAN> <SPAN STYLE="COLOR:BROWN"><STRONG>extends</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>WrapperPath_opt</STRONG></SPAN>
+  <SPAN STYLE="COLOR:#444444">{</SPAN>
+    <SPAN STYLE="COLOR:#88AA66"><EM>// Set wrapperPath to a new list and add to it the XML wrapper
+</EM></SPAN>    <SPAN STYLE="COLOR:#88AA66"><EM>// (the symbol and its distribution switch):
+</EM></SPAN>    <SPAN STYLE="COLOR:BLUE"><STRONG>void</STRONG></SPAN> add <SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#4400DD"><STRONG>String</STRONG></SPAN> s, <SPAN STYLE="COLOR:BLUE"><STRONG>boolean</STRONG></SPAN> b<SPAN STYLE="COLOR:#444444">)</SPAN>
+      <SPAN STYLE="COLOR:#444444">{</SPAN>
+	<SPAN STYLE="COLOR:#444444">(</SPAN>wrapperPath = <SPAN STYLE="COLOR:BROWN"><STRONG>new</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>ArrayList</STRONG></SPAN><SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>.add<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:BROWN"><STRONG>new</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>XmlWrapper</STRONG></SPAN><SPAN STYLE="COLOR:#444444">(</SPAN>s,b<SPAN STYLE="COLOR:#444444">)</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>;
+      <SPAN STYLE="COLOR:#444444">}</SPAN>
+
+    <SPAN STYLE="COLOR:#88AA66"><EM>// Set wrapperPath to the specified path, and add to it the XML
+</EM></SPAN>    <SPAN STYLE="COLOR:#88AA66"><EM>// wrapper (the symbol and its distribution switch):
+</EM></SPAN>    <SPAN STYLE="COLOR:BLUE"><STRONG>void</STRONG></SPAN> addTo <SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#4400DD"><STRONG>ArrayList</STRONG></SPAN> path, <SPAN STYLE="COLOR:#4400DD"><STRONG>String</STRONG></SPAN> s, <SPAN STYLE="COLOR:BLUE"><STRONG>boolean</STRONG></SPAN> b<SPAN STYLE="COLOR:#444444">)</SPAN>
+      <SPAN STYLE="COLOR:#444444">{</SPAN>
+	<SPAN STYLE="COLOR:#444444">(</SPAN>wrapperPath = path<SPAN STYLE="COLOR:#444444">)</SPAN>.add<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:BROWN"><STRONG>new</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>XmlWrapper</STRONG></SPAN><SPAN STYLE="COLOR:#444444">(</SPAN>s,b<SPAN STYLE="COLOR:#444444">)</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>;
+      <SPAN STYLE="COLOR:#444444">}</SPAN>
+  <SPAN STYLE="COLOR:#444444">}</SPAN>
+
+
+</PRE>
+<HR>
+<CENTER>
+<TABLE BGCOLOR="WHITE" WIDTH=90% BORDER=1 CELLPADDING=10>
+<TR><TD><SPAN STYLE="COLOR:BLACK">
+
+  A <tt>$ChildXmlTree$</tt> has the following fields:
+  <ul>
+  <li> <tt>cstChildPosition</tt>: an <tt>int</tt> - a CST child position;
+  <li> <tt>xmlPath</tt>: an <tt>IntArrayList</tt> - a (possibly
+       <tt>null</tt>) list of XML subtree positions;
+  <li> <tt>hasTerminalValueContent</tt> - <tt>true</tt> indicates terminal
+       value;
+  <li> <tt>textInfo</tt> - if non-null, an <tt>ArrayList</tt> of
+       <tt>XmlTextInfo</tt>s giving the arguments of a <tt>TEXT</tt>
+       special form.
+  </ul>
+ 
+</SPAN></TD></TR>
+</TABLE>
+</CENTER>
+<P>
+<PRE>
+
+%nodeclass <SPAN STYLE="COLOR:#4400DD"><STRONG>ChildXmlTree</STRONG></SPAN>
+  <SPAN STYLE="COLOR:#444444">{</SPAN>
+    <SPAN STYLE="COLOR:BLUE"><STRONG>int</STRONG></SPAN> cstChildPosition;
+    <SPAN STYLE="COLOR:#4400DD"><STRONG>IntArrayList</STRONG></SPAN> xmlPath = <SPAN STYLE="COLOR:GREEN">null</SPAN>;    
+    <SPAN STYLE="COLOR:BLUE"><STRONG>boolean</STRONG></SPAN> hasTerminalValueContent = <SPAN STYLE="COLOR:GREEN">false</SPAN>;
+    <SPAN STYLE="COLOR:#4400DD"><STRONG>ArrayList</STRONG></SPAN> textInfo = <SPAN STYLE="COLOR:GREEN">null</SPAN>;
+  <SPAN STYLE="COLOR:#444444">}</SPAN>
+
+
+</PRE>
+<HR>
+<CENTER>
+<TABLE BGCOLOR="WHITE" WIDTH=90% BORDER=1 CELLPADDING=10>
+<TR><TD><SPAN STYLE="COLOR:BLACK">
+
+  A <tt>$XmlChildSpec$</tt>  is a <tt>$ChildXmlTree$</tt> with
+  the following additional field:
+  <ul>
+  <li> <tt>wrapperPath</tt>, an <tt>ArrayList</tt> - a (possibly
+       <tt>null</tt>) list of <tt>XmlWrapper</tt>s. 
+  </ul>
+ 
+</SPAN></TD></TR>
+</TABLE>
+</CENTER>
+<P>
+<PRE>
+
+%nodeclass <SPAN STYLE="COLOR:#4400DD"><STRONG>XmlChildSpec</STRONG></SPAN> <SPAN STYLE="COLOR:BROWN"><STRONG>extends</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>ChildXmlTree</STRONG></SPAN>
+  <SPAN STYLE="COLOR:#444444">{</SPAN>
+    <SPAN STYLE="COLOR:#4400DD"><STRONG>ArrayList</STRONG></SPAN> wrapperPath = <SPAN STYLE="COLOR:GREEN">null</SPAN>;
+  <SPAN STYLE="COLOR:#444444">}</SPAN>
+
+
+</PRE>
+<HR>
+<CENTER>
+<TABLE BGCOLOR="WHITE" WIDTH=90% BORDER=1 CELLPADDING=10>
+<TR><TD><SPAN STYLE="COLOR:BLACK">
+
+  A <tt>$XmlTreeRef$</tt> is a <tt>$XmlChildSpec$</tt> with
+  the following additional field:
+  <ul>
+  <li> <tt>attributeName</tt>, a <tt>String</tt> - an
+       attribute name.
+  </ul>
+ 
+</SPAN></TD></TR>
+</TABLE>
+</CENTER>
+<P>
+<PRE>
+
+%nodeclass <SPAN STYLE="COLOR:#4400DD"><STRONG>XmlTreeRef</STRONG></SPAN> <SPAN STYLE="COLOR:BROWN"><STRONG>extends</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>XmlChildSpec</STRONG></SPAN>
+  <SPAN STYLE="COLOR:#444444">{</SPAN>
+    <SPAN STYLE="COLOR:#4400DD"><STRONG>String</STRONG></SPAN> attributeName = <SPAN STYLE="COLOR:GREEN">null</SPAN>;
+  <SPAN STYLE="COLOR:#444444">}</SPAN>
+
+%nodeclass <SPAN STYLE="COLOR:#4400DD"><STRONG>AttributeName_opt</STRONG></SPAN>
+  <SPAN STYLE="COLOR:#444444">{</SPAN>
+    <SPAN STYLE="COLOR:#4400DD"><STRONG>String</STRONG></SPAN> attributeName = <SPAN STYLE="COLOR:GREEN">null</SPAN>;
+  <SPAN STYLE="COLOR:#444444">}</SPAN>
+
+%nodeclass <SPAN STYLE="COLOR:#4400DD"><STRONG>AttributeName</STRONG></SPAN> <SPAN STYLE="COLOR:BROWN"><STRONG>extends</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>AttributeName_opt</STRONG></SPAN>
+  <SPAN STYLE="COLOR:#444444">{</SPAN>
+  <SPAN STYLE="COLOR:#444444">}</SPAN>
+
+<SPAN STYLE="COLOR:#88AA66"><EM>////////////////////////////////////////////////////////////////////////
+</EM></SPAN>
+
+</PRE>
+<HR>
+<CENTER>
+<TABLE BGCOLOR="WHITE" WIDTH=90% BORDER=1 CELLPADDING=10>
+<TR><TD><SPAN STYLE="COLOR:BLACK">
+
+  An <tt>$AttributeValue$</tt> is a special case of
+  <tt>$XmlTreeRef$</tt>.  It has a flag <tt>hasLiteralValueContent</tt>
+  indicating whether it carries a literal value; when this flag is
+  <tt>true</tt>, then the literal value is in the <tt>value</tt> field.
+  
+ 
+</SPAN></TD></TR>
+</TABLE>
+</CENTER>
+<P>
+<PRE>
+
+%nodeclass <SPAN STYLE="COLOR:#4400DD"><STRONG>AttributeValue</STRONG></SPAN> <SPAN STYLE="COLOR:BROWN"><STRONG>extends</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>XmlTreeRef</STRONG></SPAN>
+  <SPAN STYLE="COLOR:#444444">{</SPAN>
+    <SPAN STYLE="COLOR:BLUE"><STRONG>boolean</STRONG></SPAN> hasLiteralValueContent = <SPAN STYLE="COLOR:GREEN">false</SPAN>;
+    <SPAN STYLE="COLOR:#4400DD"><STRONG>String</STRONG></SPAN> value = <SPAN STYLE="COLOR:GREEN">null</SPAN>;
+    <SPAN STYLE="COLOR:#4400DD"><STRONG>ArrayList</STRONG></SPAN> textInfo = <SPAN STYLE="COLOR:GREEN">null</SPAN>;
+  <SPAN STYLE="COLOR:#444444">}</SPAN>
+
+
+</PRE>
+<HR>
+<CENTER>
+<TABLE BGCOLOR="WHITE" WIDTH=90% BORDER=1 CELLPADDING=10>
+<TR><TD><SPAN STYLE="COLOR:BLACK">
+
+  An <tt>$XmlPath_opt$</tt> stores the sequence of numbers
+  making up a <tt>$XmlPath$</tt> in an <tt>IntArrayList</tt>
+  called <tt>xmlPath</tt>.
+ 
+</SPAN></TD></TR>
+</TABLE>
+</CENTER>
+<P>
+<PRE>
+
+%nodeclass <SPAN STYLE="COLOR:#4400DD"><STRONG>XmlPath_opt</STRONG></SPAN>
+  <SPAN STYLE="COLOR:#444444">{</SPAN>
+    <SPAN STYLE="COLOR:#4400DD"><STRONG>IntArrayList</STRONG></SPAN> xmlPath = <SPAN STYLE="COLOR:GREEN">null</SPAN>;
+  <SPAN STYLE="COLOR:#444444">}</SPAN>
+
+%nodeclass <SPAN STYLE="COLOR:#4400DD"><STRONG>XmlPath</STRONG></SPAN> <SPAN STYLE="COLOR:BROWN"><STRONG>extends</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>XmlPath_opt</STRONG></SPAN>
+  <SPAN STYLE="COLOR:#444444">{</SPAN>
+    <SPAN STYLE="COLOR:#88AA66"><EM>// Set xmlPath to a new list and add to it the specififed number.
+</EM></SPAN>    <SPAN STYLE="COLOR:BLUE"><STRONG>void</STRONG></SPAN> add <SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:BLUE"><STRONG>int</STRONG></SPAN> n<SPAN STYLE="COLOR:#444444">)</SPAN>
+      <SPAN STYLE="COLOR:#444444">{</SPAN>
+	<SPAN STYLE="COLOR:#444444">(</SPAN>xmlPath = <SPAN STYLE="COLOR:BROWN"><STRONG>new</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>IntArrayList</STRONG></SPAN><SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>.add<SPAN STYLE="COLOR:#444444">(</SPAN>n<SPAN STYLE="COLOR:#444444">)</SPAN>;
+      <SPAN STYLE="COLOR:#444444">}</SPAN>
+
+    <SPAN STYLE="COLOR:#88AA66"><EM>// Set xmlPath to the specified path, and add to it the specififed
+</EM></SPAN>    <SPAN STYLE="COLOR:#88AA66"><EM>// number.
+</EM></SPAN>    <SPAN STYLE="COLOR:BLUE"><STRONG>void</STRONG></SPAN> addTo <SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#4400DD"><STRONG>IntArrayList</STRONG></SPAN> path, <SPAN STYLE="COLOR:BLUE"><STRONG>int</STRONG></SPAN> n<SPAN STYLE="COLOR:#444444">)</SPAN>
+      <SPAN STYLE="COLOR:#444444">{</SPAN>
+	<SPAN STYLE="COLOR:#444444">(</SPAN>xmlPath = path<SPAN STYLE="COLOR:#444444">)</SPAN>.add<SPAN STYLE="COLOR:#444444">(</SPAN>n<SPAN STYLE="COLOR:#444444">)</SPAN>;
+      <SPAN STYLE="COLOR:#444444">}</SPAN>
+  <SPAN STYLE="COLOR:#444444">}</SPAN>
+
+%nodeclass <SPAN STYLE="COLOR:#4400DD"><STRONG>DotOrStar</STRONG></SPAN>
+  <SPAN STYLE="COLOR:#444444">{</SPAN>
+    <SPAN STYLE="COLOR:BLUE"><STRONG>boolean</STRONG></SPAN> isStarred = <SPAN STYLE="COLOR:GREEN">false</SPAN>;
+  <SPAN STYLE="COLOR:#444444">}</SPAN>
+
+%nodeclass <SPAN STYLE="COLOR:#4400DD"><STRONG>TextArgument</STRONG></SPAN>
+  <SPAN STYLE="COLOR:#444444">{</SPAN>
+    <SPAN STYLE="COLOR:#4400DD"><STRONG>XmlTextInfoArg</STRONG></SPAN> info = <SPAN STYLE="COLOR:GREEN">null</SPAN>;
+  <SPAN STYLE="COLOR:#444444">}</SPAN>
+
+%nodeclass <SPAN STYLE="COLOR:#4400DD"><STRONG>TextRef</STRONG></SPAN> <SPAN STYLE="COLOR:BROWN"><STRONG>extends</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>TextArgument</STRONG></SPAN>
+  <SPAN STYLE="COLOR:#444444">{</SPAN>
+  <SPAN STYLE="COLOR:#444444">}</SPAN>
+
+%nodeclass <SPAN STYLE="COLOR:#4400DD"><STRONG>TextArguments</STRONG></SPAN>
+  <SPAN STYLE="COLOR:#444444">{</SPAN>
+    <SPAN STYLE="COLOR:#4400DD"><STRONG>ArrayList</STRONG></SPAN> textInfo = <SPAN STYLE="COLOR:GREEN">null</SPAN>;
+  <SPAN STYLE="COLOR:#444444">}</SPAN>
+
+%nodeclass <SPAN STYLE="COLOR:#4400DD"><STRONG>SpecialForm</STRONG></SPAN> <SPAN STYLE="COLOR:BROWN"><STRONG>extends</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>TextArguments</STRONG></SPAN>
+  <SPAN STYLE="COLOR:#444444">{</SPAN>
+    <SPAN STYLE="COLOR:BLUE"><STRONG>boolean</STRONG></SPAN> hasTerminalValueContent = <SPAN STYLE="COLOR:GREEN">false</SPAN>;
+  <SPAN STYLE="COLOR:#444444">}</SPAN>
+
+<SPAN STYLE="COLOR:#88AA66"><EM>////////////////////////////////////////////////////////////////////////
+</EM></SPAN>
+</PRE>
+<P>
+<HR>
+<P ALIGN="RIGHT"><SPAN STYLE="COLOR:#F07070"><EM>
+This file was generated on Tue Apr 30 07:44:49 CEST 2019 from file <SPAN STYLE="COLOR:BROWN"><KBD>XmlAnnotationNodeClasses.grm</KBD></SPAN><BR>by the <SPAN STYLE="COLOR:BROWN"><KBD>hlt.language.tools.Hilite</KBD></SPAN> Java tool written by <A HREF="http://hassan-ait-kaci.net">Hassan A&iuml;t-Kaci</A></EM></SPAN>
+<P>
+<HR>
+</BODY>
+</HTML>

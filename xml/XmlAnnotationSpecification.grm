@@ -1,0 +1,806 @@
+// FILE. . . . . /home/hak/hlt/src/hlt/language/syntax/xml/XmlAnnotationSpecification.grm
+// EDIT BY . . . Hassan Ait-Kaci
+// ON MACHINE. . 4j4zn71
+// STARTED ON. . Sat Apr 07 15:27:08 2007
+
+// Last modified on Sun May 27 06:24:58 2018 by hak
+
+/**
+ * <font size="-1"color="red"><b><tt>
+ * [See also the <a href="JavaSources.html">Java sources</a>]
+ * </tt></b></font>
+ *
+ * <p>
+ *
+ * We need a means to annotate a Jacc grammar so as to ease and automate
+ * the process of specifying an XML serialization for the language
+ * defined by the grammar. The way we proceed is by annotating some
+ * rules and terminals to produce an XML form built out of those XML
+ * forms built for the constituents of the CST (<i>i.e.</i>, from a
+ * terminal's contents or a rule's RHS).
+ *
+ *
+ * <p>
+ *
+ * This specifies a grammar for a simple annotation language meant to
+ * enable passing XML formatting information from a Jacc grammar to a
+ * Jacc parser. This defines the form of what goes between square
+ * bracketed arguments of the <tt>xmlinfo</tt> command annotating a
+ * terminal, or appearing in a rule being annotated for XML conversion
+ * (<i>i.e.</i>, for serialization purposes). Doing this gives us great
+ * flexibility for extending or modifying the annotation meta-syntax
+ * simply by:
+ *
+ * <p>
+ * <ol>
+ * <li> modifying the <a href="XmlAnnotation.html">Jacc grammar
+ *      source file</a>,
+ * <li> running the <tt>jacc</tt> command on it to regenerate the
+ *      <a href="XmlAnnotationParser.html"><tt>XmlAnnotationParser</tt></a>
+ *      java source, and
+ * <li> recompiling.
+ * </ol>
+ * <i>Et voil&agrave; ! ...</i>
+ *
+ * <h1>Specification</h1>
+ *
+ * <h2><a name="homo">Basic annotation notation</a></h2>
+ *
+ * We first introduce the basic annotation notation for the very
+ * common case when the XML tree to be constructed from the CST is
+ * <i>homomorphic</i> to the CST in that it only needs information
+ * that is local to the CST node. We will extend this notation
+ * later when the tree construction is <i>heteromorphic</i>, needing
+ * information from below this node.
+ *
+ * <p>
+ *
+ * In order for the parser of the annotation notation to stay
+ * small and light-weight, as well as avoiding ambiguity and
+ * stay strictly within LALR(1) recognition power, we will
+ * adopt the following very simple keyword-driven syntax. For
+ * example:
+ *
+ * <font color="brown">
+ * <pre>
+ * A<sub>0</sub> : A<sub>1</sub> A<sub>2</sub> A<sub>3</sub> A<sub>4</sub> <font color="green">
+ *    [
+ *      nsprefix   : "foo"
+ *      localname  : "Azero"
+ *      attributes : {a = "bar blah", b="blech"}
+ *      children   : (2, 3)
+ *    ] </font>
+ *    ;
+ * </pre>
+ * </font>
+ * 
+ * means that the XMLification of an <tt>A<sub>0</sub></tt> node (created when
+ * the parser uses this grammar rule bottom-up) will look like:
+ *
+ * <font color="blue">
+ * <pre>
+ * &lt;foo:Azero a="bar blah" b="blech"&gt;
+ *   xmlification of A<sub>2</sub>
+ *   xmlification of A<sub>3</sub>
+ * &lt;/foo:Azero&gt;
+ * </pre>
+ * </font>
+ *
+ * In such an annotation, appearing in any order, the
+ * notation "<tt>keyword : value</tt>" is such that
+ * <tt>keyword</tt> is an admissible keyword.  An admissible
+ * keyword is such that there may be <u><i>at most
+ * one</i></u> occurrence per annotation of:
+ *
+ * <pre>
+ *       nsprefix
+ *       localname
+ *       attributes
+ *       children
+ * </pre>
+ *
+ * Such an admissible keyword is followed by a value, which may be
+ * either an identifier, a single- or double-quoted string, or a list
+ * between curly braces <tt>{...}</tt>, or parentheses <tt>(...)</tt>,
+ * the nature of this list's brackets and elements depending on the
+ * keyword.  See the <a href="YaccForm.html">grammar rules</a> for
+ * details.
+ *
+ * <p>
+ *
+ * <b>N.B.</b>: The annotation is meant to be light-weight - all these
+ * keywords may be abbreviated to any non-empty case-insensitive prefix
+ * of their full form, and some punctuation may be used interchangeably
+ * or simply omitted: <i>e.g.</i>, the "<tt>:</tt>" separating keywords
+ * and values, the "<tt>,</tt>" separating list elements, as well as
+ * unnecessary quotes, are all in fact optional.  The following
+ * key/value separator symbols may be used: "<tt>:</tt>", "<tt>=</tt>",
+ * "<tt>-></tt>", "<tt>=></tt>", or they may be simply omitted.
+ * Similarly, the following list separator symbols may be used:
+ * "<tt>,</tt>" (comma), "<tt>;</tt>" (semicolon), or they may be simply
+ * omitted. See the associate tokenizer class: <a
+ * href="XmlAnnotationTokenizer.html"><tt>XmlAnnotationTokenizer.java</tt></a>
+ * for details.
+ *
+ * <p>
+ *
+ * For example, the above same annotation could equally be
+ * written as follows:
+ *
+ * <font color="brown">
+ * <pre>
+ * A<sub>0</sub> : A<sub>1</sub> A<sub>2</sub> A<sub>3</sub> A<sub>4</sub> <font color="green">
+ *    [
+ *      NS foo
+ *      LO Azero
+ *      AT {a -> 'bar blah';  b -> blech}
+ *      CH (2 3)
+ *    ]</font>
+ *    ;
+ * </pre>
+ * </font>
+ *
+ * <h2><a name="hetero">More complex annotation notation</a></h2>
+ * 
+ * The simple notation above is all one needs in many common cases: it
+ * works whenever the XML serialization pattern is constructible only
+ * from the immediate constituents of the rule's LHS
+ * (<tt>A<sub>0</sub></tt>) - <i>i.e.</i>, the XML trees of the rule's
+ * RHS symbols (<tt>n&gt;0</tt>).  It is, however, insufficient for
+ * expressing XML serialization patterns that depend on sub-elements
+ * contained within those of the XML serialization of the RHS symbols.
+ * The simple case is called <i>homomorphic</i> tree transduction, while
+ * the more complex case is called <i>heteromorphic</i> tree
+ * transduction. <font size="-1" color="purple"><i>[<b>NB</b>:
+ * "homo-morphic" = "of similar form" (from the Greek "<font
+ * face="symbol">homo-morfos</font>", meaning "same shape"), and
+ * "hetero-morphic" = "of dissimilar form" (from the Greek "<font
+ * face="symbol">hetero-morfos</font>", meaning "different
+ * shape").</i>]</font>
+ *
+ * <p>
+ *
+ * A more elaborate XML annotation notation extends the above basic
+ * notation by allowing the values of attributes and children in the
+ * annotation to take on more complex forms denoting a reference to the
+ * desired XML constructs within the XML trees already built for the CST
+ * children of this node.  Following are some simple color-coded
+ * examples illustrating the meaning of these annotations, showing how
+ * the basic notation for homomorphic tree-transduction annotations for
+ * attribute and children is extended to express heteromorphic
+ * tree-transduction as well.
+ *
+ * <h3>Children annotation:</h3>
+ *
+ * <ul>
+ *
+ * <li> <h4>Basic children annotation notation:</h4><b>
+ * <pre>
+ * CH:(<font size="+1" color="red">2</font>, <font size="+1" color="purple">4</font>)
+ * </pre>
+ * </b>specifies that the XML children are, in this order:
+ * <p>
+ * <ol>
+ * <li> XML form of <font size="+1" color="red">2</font><sup>nd</sup>
+ *      child CST,
+ * <li> XML form of <font size="+1" color="purple">4</font><sup>th</sup>
+ *      child CST.
+ * </ol>
+ * <p>
+ * <li> <h4>Extended children annotation notation:</h4>
+ * <ul>
+ * <li> <h5>Granchildren notation:</h5><b>
+ *
+ * <pre>
+ * CH:(<font size="+1" color="red">2</font>[<font size="+1" color="orange">1</font>], <font size="+1" color="purple">4</font>[<font size="+1" color="paleblue">2</font>])
+ * </pre>
+ * </b>specifies that the XML children are, in this order:
+ * <p>
+ * <ol>
+ * <li> <font size="+1" color="orange">1</font><sup>st</sup>
+ *      XML component of the XML form of <font size="+1"
+ *      color="red">2</font><sup>nd</sup> child CST,
+ * <li> <font size="+1" color="paleblue">2</font><sup>nd</sup>
+ *      XML component of the XML form of <font size="+1"
+ *      color="purple">4</font><sup>th</sup> child CST.
+ * </ol>
+ * <p>
+ *
+ * <li> <h5>Descendants notation:</h5><b>
+ * <pre>  CH:(<font size="+1" color="red">2</font>[<font size="+1" color="orange">1</font>.<font size="+1" color="tan">4</font>], <font size="+1" color="purple">1</font>[<font size="+1" color="navy">2</font>.<font size="+1" color="blue">1</font>.<font size="+1" color="magenta">3</font>])</pre>
+ * </b>specifies that the XML children are, in this order:
+ * <p>
+ * <ol>
+ * <li> <font size="+1" color="tan">4</font><sup>th</sup>
+ *      XML component of <font size="+1" color="orange">1</font><sup>st</sup> XML
+ *      component of the XML form of <font size="+1"
+ *      color="red">2</font><sup>nd</sup> child CST,
+ * <li> <font size="+1" color="magenta">3</font><sup>rd</sup>
+ *      XML component of <font size="+1" color="blue">1</font><sup>st</sup>
+ *      XML component of <font size="+1" color="navy">2</font><sup>nd</sup>
+ *      XML component of the XML form of <font size="+1"
+ *      color="purple">1</font><sup>st</sup> child CST.
+ *
+ * </ol>
+ * <li> <h5>Attribute reference notation:</h5><b>
+ * <pre>  CH:(<font size="+1" color="red">2</font>[<font size="+1" color="orange">1</font>.<font size="+1" color="tan">4</font>]<font size="+1" color="blue">/foo</font>)</pre>
+ * </b>specifies that the only XML child is:
+ * <p>
+ * <ol>
+ * <li> the string value of the attribute named <b><tt><font size="+1"
+ *      color="blue">foo</font></tt></b> of the <font size="+1"
+ *      color="tan">4</font><sup>th</sup> XML component of <font
+ *      size="+1" color="orange">1</font><sup>st</sup> XML component of
+ *      the XML form of <font size="+1" color="red">2</font><sup>nd</sup>
+ *      child CST.
+ *
+ * </ol>
+ *
+ * <li> <h5>Wrapper notation:</h5><b>
+ *
+ * <pre>
+ * CH:(<font size="+1" color="green">foo</font>.<font size="+1" color="red">2</font>, <font size="+1" color="orange">bar</font>.<font size="+1" color="blue">fuz</font>.<font size="+1" color="purple">4</font>)
+ * </pre>
+ * </b>specifies that the XML children are, in this order:
+ * <p>
+ * <ol>
+ * <li> <font size="+1" color="green"><tt>&lt;foo&gt;</tt></font>
+ *       XML form of <font size="+1" color="red">2</font><sup>nd</sup> child CST
+ *      <font size="+1" color="green"><tt>&lt;/foo&gt;</tt></font>
+ * <li> <font size="+1" color="orange"><tt>&lt;bar&gt;</tt></font>
+ *      <font size="+1" color="blue"><tt>&lt;fuz&gt;</tt></font>
+ *      XML form of <font size="+1" color="purple">4</font><sup>th</sup> child CST
+ *      <font size="+1" color="blue"><tt>&lt;/fuz&gt;</tt></font>
+ *      <font size="+1" color="orange"><tt>&lt;/bar&gt;</tt></font>
+ * </ol>
+ *
+ * <p>
+ *
+ * <b>N.B.</b>: By default, wrappers <u>do not <i>distribute</i></u>
+ * over their contents.  In other words, the resulting form will be one
+ * with all the contents wrapped in a single nesting of wrappers.  If it
+ * is desired to override this default behavior and actually distribute
+ * a wrapper tag path over the sequence making up the contents being
+ * wrapped, then one uses an asterisk ('<font
+ * color="red"><tt>&#42;</tt></font>') instead of a dot ('<font
+ * color="red"><tt>.</tt></font>'), as in, <i>e.g.</i>:
+ *
+ * <p>
+ *
+ * <ul><b><tt>
+ * 
+ * CH:(<font size="+1" color="green">foo</font>&#42;<font
+ * size="+1" color="brown">2</font>, <font size="+1"
+ * color="purple">bar</font>&#42;<font size="+1"
+ * color="blue">fuz</font>.<font size="+1"
+ * color="orange">4</font>)
+ *
+ * </tt></b></ul>
+ *
+ * <p>
+ *
+ * Thus, using an asterisk rather than a dot in specifying a wrapper
+ * path triggers one of three things depending on whether the contents
+ * being wrapped is:
+ *
+ * <p>
+ *
+ * <ul>
+ * <table cellpadding="2">
+ *
+ * <tr><td>1.</td>
+ *     <td><font color="blue">nothing</font>:</td>
+ *     <td><font color="red">nothing</font>;</td>
+ * </tr>
+ *
+ * <tr><td>2.</td>
+ *     <td><font color="blue">a single XML element</font>:</td>
+ *     <td><font color="red">the wrapped single element</font>;</td>
+ * </tr>
+ *
+ * <tr><td>3.</td>
+ *     <td><font color="blue">a sequence of XML elements</font>:</td>
+ *     <td><font color="red">the sequence of wrapped elements</font>.</td>
+ * </tr>
+ *
+ * </table>
+ * </ul>
+ *
+ * </ul>
+ *
+ * <p>
+ *
+ * <li><h4>Summary of children notation</h4>
+ *
+ * The full form of the annotation expression for specifying children is:
+ * <pre>CH:(... <font size="+1" color="blue"><b>w<sub>1</sub></b> ... <b>w<sub>n</sub></b></font><font size="+1" color="red"><b>c</b></font><font size="+1" color ="green"><b>[x<sub>1</sub>. ... .x<sub>m</sub>]</b></font><font size="+1" color="purple"><b>/a</b></font> ...)</pre>
+ *
+ * of which only <tt><font size="+1" color="red"><b>c</b></font></tt> is mandatory.
+ * The four parts of a child specification expression are:
+ * <ol>
+ * <p>
+ *
+ * <li> <font color="brown"><b><i>The wrapper path:</i></b></font>
+
+ *      <tt><font size="+1" color="blue"><b>w<sub>1</sub></b> ...
+ *      <b>w<sub>n</sub></b></font></tt> is optional: each <font
+ *      color="brown">wrapper</font><tt> <font size="+1"
+ *      color="blue"><b>w<sub>i</sub></b></font></tt> is a pair made of
+ *      a (unquoted, single-quoted, or double-quoted) <font
+ *      color="brown"><i>string</i></font> (an XML tag), followed by a
+ *      <b><font color="brown"><i>distribution marker</i></font> :</b>
+ *      either a <font color="brown"><i>dot</i></font> ('<font size="+1"
+ *      color="red"><tt>.</tt></font>'), or an asterisk ('<font
+ *      size="+1" color="red"><tt>&#42;</tt></font>'). Using a dot
+ *      triggers single wrapping, while using an asterisk triggers
+ *      distributive wrapping (at the nesting level specified).
+ *
+ * <p>
+ *
+ *<li> <font color="brown"> <b><i>The child:</i> </b></font>there are two
+ *     cases:
+ *
+ *      <ol>
+ *
+ *      <p><li><i>in a rule's annotation</i>, <tt><font size="+1"
+ *      color="red"><b>c</b></font></tt> is a <font
+ *      color="brown"><i>positive integer</i></font> and denotes <font
+ *      color="brown">a position in the rule's RHS</font> (<i>i.e.</i>,
+ *      a position in the CST) and refers to the XML tree corresponding
+ *      to the child CST at this position;
+ *
+ *      <p><li><tt><font size="+1" color="red"><b>c</b></font></tt> may
+ *      <it>not</t> be a number but a <a href="#special"><i>special
+ *      form</i></a>. In this case, there may be nothing trailing after
+ *      <tt><font size="+1" color="red"><b>c</b></font></tt>;
+ *      <i>i.e.</i>, <b><tt><font size="+1" color
+ *      ="green">[x<sub>1</sub>.  ... .x<sub>m</sub>]</font><font
+ *      size="+1" color ="purple">/a</font></tt></b> is empty.
+ *
+ *      </ol>
+ *
+ * <p>
+ *
+ *<li> <font color="brown"> <b><i>The XML tree path:</i></b></font><tt><font
+ *     size="+1" color ="green"><b>[x<sub>1</sub>.
+ *     ... .x<sub>m</sub>]</b></font></tt> is optional; if not empty, it
+ *     denotes a path in the XML tree corresponding to referring CST child,
+ *     each <tt><font size="+1"
+ *     color="green"><b>x<sub>j</sub></b></font></tt> being a <font
+ *     color="brown"><i>positive integer</i></font> denoting <font color
+ *     ="brown">a child position in the XML tree</font> rooted in this
+ *      referring CST child.
+ *
+ * <p>
+ *
+ *<li> <font color="brown"> <b><i>The attribute
+ *     reference:</i></b></font> <b><tt><font size="+1"
+ *     color="purple">/a</font></tt></b> is optional; when present,
+ *     <tt><font size="+1" color="purple"><b>a</b></font></tt> is a
+ *     (possibly unquoted, single-quoted, or double-quoted) <font
+ *     color="brown"><i>string</i></font>; it must be the name of an XML
+ *     attribute in the ultimate XML tree referred to by
+ *     <tt><font size="+1" color="red"><b>c</b></font><font size="+1"
+ *     color ="green"><b>[x<sub>1</sub>. ... .x<sub>m</sub>]</b></font></tt>,
+ *     and denotes <font color="brown"></i>the string content making up
+ *     the value of that XML attribute</i></font>.
+ * 
+ * </ol>
+ * </ul>
+ *
+ * <p>
+ *
+ * <h3>Attributes annotation:</h3>
+ * 
+ * <ul>
+ *
+ * <li><h4>Basic attribute annotation notation:</h4><b>
+ * <pre>  AT:{<font size="+1" color="blue">foo</font>=<font size="+1" color="red">"bar"</font>}</pre>
+ * </b> sets the attribute named <tt><font size="+1"
+ * color="blue">foo</font></tt> to the literal string value <tt><font size="+1"
+ * color="red">"bar"</font></tt>.
+ * <p>
+ *
+ * <li><h4>Extended attribute notation:</h4>
+ *
+ * <ul>
+ *
+ * <li><h5>Child's text value:</h5><b>
+ * <pre>  AT:{<font size="+1" color="blue">foo</font>=<font size="+1" color="magenta">3</font>}</pre>
+ * </b>sets the attribute named <tt><font size="+1"
+ * color="blue">foo</font></tt> to the text value of the XML form of <font
+ * size="+1" color="magenta">3</font><sup>rd</sup> child CST.
+ * <p>
+ *
+ * <li><h5>Child's attribute value:</h5><b>
+ * <pre>  AT:{<font size="+1" color="blue">foo</font>=<font size="+1" color="magenta">3</font>/<font size="+1" color="red">bar</font>}</pre>
+ * </b>sets the attribute named <tt><font size="+1"
+ * color="blue">foo</font></tt> to the value of the attribute named
+ * <tt><font size="+1" color="red">bar</font></tt> in the XML form of <font
+ * size="+1" color="magenta">3</font><sup>rd</sup> child CST.
+ * <p>
+ *
+ * <li><h5>Descendant's text value:</h5><b>
+ * <pre>  AT:{<font size="+1" color="blue">foo</font>=<font size="+1" color="magenta">3</font>[<font size="+1" color="brown">1</font>.<font size="+1" color="tan">2</font>]}</pre>
+ * </b>sets the attribute named <tt><font size="+1"
+ * color="blue">foo</font></tt> to the text value of the <font
+ * size="+1" color="tan">2</font><sup>nd</sup> XML component of the
+ * <font size="+1" color="brown">1</font><sup>st</sup> XML component of
+ * the XML form of the <font size="+1" color="magenta">3</font><sup>rd</sup> child CST.
+ *
+ * <li><h5>Descendant's attribute value:</h5><b>
+ * <pre>  AT:{<font size="+1" color="blue">foo</font>=<font size="+1" color="magenta">3</font>[<font size="+1" color="brown">1</font>.<font size="+1" color="tan">2</font>]/<font size="+1" color="red">bar</font>}</pre>
+ * </b>sets the attribute named <tt><font size="+1"
+ * color="blue">foo</font></tt> to the value of the attribute named
+ * <tt><font size="+1" color="red">bar</font></tt> located in the <font
+ * size="+1" color="tan">2</font><sup>nd</sup> XML component of the
+ * <font size="+1" color="brown">1</font><sup>st</sup> XML component of
+ * the XML form of the <font size="+1" color="magenta">3</font><sup>rd</sup> child CST.
+ *
+ * <li><h5>Terminal value:</h5>
+ *
+ * In a terminal's annotation only:
+ * <b>
+ * <pre>
+ * AT:{<font size="+1" color="blue">foo</font>=<font size="+1" color="red">&#36;VALUE</font>}</pre>
+ * </b>sets the attribute named <tt><font size="+1"
+ * color="blue">foo</font></tt> to the value of the terminal
+ * node actually parsed.
+ * </ul>
+ *
+ *
+ * <p>
+ *
+ * <li><h4>Summary of attribute notation</h4>
+ *
+ * The full form of the annotation expression for specifying an attribute is:
+ * <pre>AT:{... <font size="+1" color="blue"><b>foo</b></font>=<font size="+1" color="red"><b>c</b></font><font size="+1" color ="green"><b>[x<sub>1</sub>. ... .x<sub>m</sub>]</b></font><font size="+1" color="purple"><b>/a</b></font> ...}</pre>
+ *
+ * of which only <b><tt><font size="+1" color="red">c</font></tt></b> is
+ * mandatory.
+ *
+ * <ul>
+ *
+ * <p> <li> If <b><tt><font size="+1" color="green">[x<sub>1</sub>.
+ *      ... .x<sub>m</sub>]</font><font size="+1" color="purple">/a</font></tt></b>
+ *      is missing, then <b><tt><font size="+1" color="red">c</font></tt></b>
+ *      may be only one of:
+ *
+ *     <ol>
+ *
+ *     <p><li>a literal string <b><tt><font size="+1" color="red">"bar"</font></tt></b>; or,
+ *
+ *     <p><li>a <a href="#special"><i>special form</i></a>.
+ *
+ *     </ol>
+ *
+ * <p> <li> If <b><tt><font size="+1" color="green">[x<sub>1</sub>.
+ *      ... .x<sub>m</sub>]</font><font size="+1"
+ *      color="purple">/a</font></tt></b> is present, then the
+ *      annotation is that of a rule and <b><tt><font size="+1"
+ *      color="red">c</font></tt></b> must be a positive integer
+ *      denoting the position a child CST for the current rule (a
+ *      position in the rule's RHS). It refers to the XML tree of
+ *      child CST at that position. If <b><tt>[x<sub>1</sub>.
+ *      ... .x<sub>m</sub>]</font></tt></b> is present, the <b><tt><font
+ *      size="+1" color="green">x<sub>i</sub></font></tt></b> is a
+ *      sequence of dot-separated positive integers, an XML tree path
+ *      referencing an XML subtree; <b><tt><font size="+1"
+ *      color="purple">/a</font></tt></b> is required whenever
+ *      <b><tt><font size="+1" color="red">c</font></tt></b> is a child
+ *      position and must be the name of an attribute in the XML tree
+ *      so-referenced. This annotation denotes the string value of this
+ *      attribute in that XML tree.
+
+ *      </ol>
+ * 
+ * </ul>
+ * </ul>
+ *
+ * <a name="special"></a><h3>Interpreted special forms:</h3>
+ *
+ * In addition to the above notation (and default behavior), we provide
+ * the following conveniences to specify finer details on the XML
+ * appearance from the information present in the CST thanks to the
+ * following built-in special forms, which all starting with a dollar
+ * sign <b><font color="red"><tt>'&#36;'</tt></font></b>, followed by
+ * the (case-insensitive) form identifier and possible arguments
+ * between parentheses and separated by a legal list separator; namely,
+ * blank space, "<tt>,</tt>" (comma), or "<tt>;</tt>" (semicolon).
+ *
+ * <p>
+ *
+ * <ul>
+ *
+ * <li><h4>Extracting the value of a terminal:
+ *     <font color="red" size="+1"><tt>&#36;VALUE</tt></font>
+ *     </h4>
+ *
+ * The notation <b><font color="red" size="+1"><tt>&#36;VALUE</tt></font></b>
+ * may appear in an XML annotation expression for either a rule or a
+ * terminal whenever the CST construct it refers to is that of a
+ * <u><i>terminal</i></u>. For example:
+ *
+ * <p>
+ *
+ * <ul>
+ *
+ * <li>an attribute value string; <i>e.g.</i>:
+ * <p>
+ * <font size="+1" color="blue"><pre>
+ *    &#37;xmlinfo TERMINAL   <font color="green"><b>[ L:"BAR" N:"Foo" A:{ fuz = <font color="red">&#36;VALUE</font> } ]</b></font></pre>
+ * </font>
+ * specifies that the terminal symbol <tt>TERMINAL</tt> whose print value
+ * is <font size="+1" color="green"><tt>"<font color="purple">Gloop</font>"</tt></font> will be serialized thus:
+ * <font size="+1" color="green">
+ * <pre>    <b>&lt;Foo:BAR fuz="<font color="purple">Gloop</font>"/&gt;</pre></b> </font>
+ *
+ * <li>a single XML content string; <i>e.g.</i>:
+ * <p>
+ * <font size="+1" color="blue"><pre>
+ *    &#37;xmlinfo TERMINAL   <font color="green"><b>[ L:"BAR" N:"Foo" C:( <font color="red">&#36;VALUE</font> ) ]</b></font></pre>
+ * </font>
+ * specifies that the terminal symbol <tt>TERMINAL</tt> whose print value
+ * is <tt><font color="purple">"Gloop"</font></tt> will be serialized thus:
+ * <font size="+1" color="green"><pre><b>
+ *    &lt;Foo:BAR&gt;<font color="purple">Gloop</font>&lt;/Foo:BAR&gt;</b></pre>
+ * </font>
+ *
+ * </ul>
+ *
+ * <li><h4>
+ * Concatenating pieces of text:
+ * <font color="red" size="+1"><tt>&#36;TEXT</tt></font>
+ * </h4>
+ *
+ * Wherever text is expected, we may use the notation <tt> <b><font
+ * color="red" size="+1"><tt>&#36;TEXT(...)</tt></font></b> </tt> to
+ * denote the text string resulting from the concatenation of the text
+ * strings denoted by its arguments, each of which may be either a
+ * literal (possibly single- or double-quoted) string, or a reference to
+ * a text value deeper in a descendant CST's XML structure using the XML
+ * tree reference notation <b><tt>c[x<sub>1</sub>
+ * ... x<sub>n</sub>]/a</tt></b>, where the <b><tt>[x<sub>1</sub>
+ * ... x<sub>n</sub>]</tt></b> and <b><tt>/a</tt></b> parts are
+ * optional. 
+ *
+ * <p>
+ *
+ * This construct comes handy for composing a text string on the fly
+ * to make up the text value of a child or an attribute. For example,
+ * given the following annotations:
+ * 
+ * <p>
+ *
+ * <font size="+1" color="blue">
+ * <pre>
+ * &#37;xmlinfo ID    <font color="green"><b>[ L:"Identifier"  A:{ name  = <font color="red">&#36;VALUE</font> } ]</font></b>
+ *
+ * &#37;xmlinfo STR   <font color="green"><b>[ L:"String"      A:{ value = <font color="red">&#36;VALUE</font> } ]</font></b>
+ *
+ * Entry
+ *   : STR '^^' EntryType<font color="green">
+ *   <b>[ L:"Place" A:{ type = <font color="red">$TEXT ( "[" 3/special "]" 3/general )</font> } C:( 1/value ) ]</b></font>
+ *   ;
+ *
+ * EntryType
+ *   : ID ':' ID<font color="green">
+ *   <b>[ L:"Type" A:{ general = 1/name special = 3/name } ]</b></font>
+ *   ;</pre>
+ * </font>
+ *
+ * the piece of <font color="blue" size="+1"><tt>Entry</tt></font> syntax:
+ *
+ * <font size="+1"><pre>  <b>"<font color="green">bar</font>"^^<font color="orange">less</font>:<font color="red">top</font></b></pre></font>
+ *
+ * gets serialized as:
+ *
+ * <font size="+1" color="blue"><pre>  <<b>Place type="[<font color="red">top</font>]<font color="orange">less</font>"</b>><font color="green"><b>bar</b></font><<b>/Place</b>></pre></font>.
+ *
+ * </ul>
+ *
+ *
+ * <h2><a name="consistency">Checking Annotation Consistency</a></h2>
+ *
+ * We need to enforce consistent number referencing in the tree
+ * addresses used in the notation - <i>i.e.</i>, the numbers that refer
+ * to RHS nodes and XML elements (the <tt>c<sub>i</sub></tt>'s and the
+ * <tt>x<sub>i</sub></tt>'s below). Indeed, they should (be made to)
+ * obey the following <i>necessary conditions</i> (all easy to justify):
+ *
+ * <ul>
+ * <p>
+ * <p>
+ * <li> <a name="con_1"><font color="orange"><b><tt>[Condition 1]</tt></b></font></a>
+ *
+ *      <p>
+ *
+ *      An annotation for a terminal, or for a rule with an empty RHS,
+ *      should not be allowed to use a tree address in any attribute
+ *      specifier (only symbol, quoted string, or number). A terminal's
+ *      <tt>CH</tt> may only contain wrappers and a reference to <tt>&#36;VALUE</tt>
+ *
+ * <p>
+ * <li> <a name="con_2"><font color="orange"><b><tt>[Condition 2]</tt></b></font></a>
+ *
+ *      <p>
+ *
+ *      In an annotation <tt>AT : {...}</tt>, the name of an attribute following
+ *      an XML tree reference must be a legal attribute of the element
+ *      so referenced.
+ *
+ * <li> <a name="con_3"><font color="orange"><b><tt>[Condition 3]</tt></b></font></a>
+ *
+ *      <p>
+ *
+ *      In a rule annotation <tt>CH : (... c<sub>i</sub>[...] ...)</tt>,
+ *      the number <tt>c<sub>i</sub></tt> must be between 1 and the
+ *      length of the rule's RHS.
+ *
+ * <p>
+ * <li> <a name="con_4"><font color="orange"><b><tt>[Condition 4]</tt></b></font></a>
+ *
+ *      <p>
+ *
+ *      In an annotation <tt>CH : (...)</tt>, two distinct occurrences
+ *      of XML content references must not be allowed to be one another's
+ *      prefix or duplicate address. In other words:
+ *      <ul>
+ *      <p>
+ *      <li> no tree address may occur more that once in the same annotation;
+ *           and,
+ *      <p>
+ *      <li> whenever a tree address of the form
+ *           <tt>c[x<sub>1</sub>.x<sub>2</sub>. ... .x<sub>n</sub>]</tt> occurs,
+ *           then neither
+ *           <tt>c[x<sub>1</sub>.x<sub>2</sub>. ... .x<sub>n-1</sub>]</tt>, nor
+ *           <tt>c[x<sub>1</sub>.x<sub>2</sub>. ... .x<sub>n-2</sub>]</tt>, ..., nor
+ *           <tt>c[x<sub>1</sub>]</tt>, nor <tt>c</tt>, may be allowed to occur
+ *           in the same annotation.
+ *      </ul>
+ *
+ *      <p>
+ *
+ *      For example, both <tt>CH : (1 2)</tt> and <tt>CH : (1 2[1] 2[2])</tt>
+ *      are legal; but, both <tt>CH : (1 2 1)</tt> and <tt>CH : (1 2[1] 1[2])</tt>
+ *      are illegal.
+ *
+ * <p>
+ * <li> <a name="con_5"><font color="orange"><b><tt>[Condition 5]</tt></b></font></a>
+ *
+ *      <p>
+ *
+ *      Note also that whenever a tree address of the form
+ *      <tt>c[x<sub>1</sub>.x<sub>2</sub>. ... .x<sub>n</sub>]</tt>
+ *      occurs, then for it to be consistent, this entails that the XML
+ *      form of the CST node referenced by <tt>c</tt> must consist of
+ *      <i>exactly one</i> XML element - as opposed to none or
+ *      many. This is true iff the referenced RHS symbol is either a
+ *      value-carrying terminal, or a non-terminal all of whose possible
+ *      XML forms are each single XML elements. This must be verified
+ *      statically at grammar analysis time.
+ *
+ * </ul>
+ *
+ * Violation of any of these conditions at parser-generation time
+ * should raise an exception and be reported as an error.
+ *
+ * <p>
+ *
+ * If all these conditions hold, then the code for the method <a
+ * href="../ParseNode.html#xmlify"><tt>xmlify(Element
+ * container)</tt></a> defined in the class <a
+ * href="../ParseNode.html"><tt>ParseNode</tt></a>, and the method <a
+ * href="../XmlInfo.html#createXmlForm"><tt>createXmlForm(ParseNode
+ * node, Element root)</tt></a> defined in the class <a
+ * href="../Xmlinfo.html"><tt>XmlInfo</tt></a>, is guaranteed to work
+ * safely.
+ *
+ * 
+ * <h2><a name="homo">DTD/Schema extraction</a></h2>
+ *
+ * Note that when all annotations are consistent, we may wish to extract
+ * more static information from the annotated grammar.  It is indeed
+ * possible to infer the global nature of the admissible XML documents
+ * generated from a specific annotated grammar at parser-generation time
+ * using simple static analysis of the grammar.  From this we may then
+ * generate a DTD or an XML Schema describing the type of XML documents
+ * produced from serializing well-formed syntactic units. This may then
+ * be optionally adjoined to the produced XML document as a seal of
+ * verifiable well-formedness.
+ *
+ * <p>
+ * 
+ * <h3>Extracting the types of XML elements from annotations</h3>
+ *
+ * For verifying a property such as <a href="#con_2"><font
+ * color="orange"><b><tt>[Condition 2]</tt></b></font></a> above, it is
+ * necessary to know the XML "element type" of the referenced XML node.
+ * This "type", of the form <tt>nsPrefix:localName</tt>, may be computed
+ * statically by analyzing the grammar's annotations, and deriving the
+ * exact XML element "type" for each tree reference in the
+ * annotations. This is done as follows.
+ *
+ * <p>
+ *
+ * To each grammar symbol <tt>A</tt>, we associate its <tt>_xmlFormType</tt>: a
+ * <a href=""><tt>RegularExpression</tt></a> denoting the set of possible XML
+ * element types that <tt>A</tt> may expand into when serialized into its XML
+ * form:
+ *
+ * <ul>
+ *
+ * <p><li> if <tt>A</tt> is an unannotated terminal that does not carry a
+ *         value, then <tt>A</tt>'s <tt>_xmlFormType</tt> is
+ *         <u><i>empty</i></u> (<i>i.e.</i>, <tt>RegularExpression.EMPTY</tt>);
+ *
+ * <p><li> if <tt>A</tt> is an annotated or value-carrying terminal, then
+ *         <tt>A</tt>'s <tt>_xmlFormType</tt> is a single XML element whose
+ *         name is the symbol's name if non-annotated, or specified by the
+ *         annotation, otherwise;
+ *
+ * <p><li> if <tt>A</tt> is a non-terminal whose ruleset is:
+ *
+ *         <pre>
+ *         A : A<sup>1</sup><sub>1</sub> ... A<sup>1</sup><sub>n<sub>1</sub></sub>
+ *           | A<sup>2</sup><sub>1</sub> ... A<sup>2</sup><sub>n<sub>2</sub></sub>
+ *           | ...
+ *           | A<sup>m</sup><sub>1</sub> ... A<sup>m</sup><sub>n<sub>m</sub></sub>
+ *           ;
+ *         </pre>
+ *
+ *         then <tt>A</tt>'s <tt>_xmlFormType</tt> is the <u><i>union</i></u>,
+ *         for each rule index <tt>i</tt>, of the <tt>X<sub>i</sub></tt>'s,
+ *         where each <tt>X<sub>i</sub></tt> is the <tt>_xmlFormType</tt>
+ *         corresponding to the <tt>i</tt><sup>th</sup> rule for <tt>A</tt>
+ *         (for <tt>0&le;i&le;m</tt>), and computed as follows:
+ *
+ *         <ul>
+ *
+ *         <p><li> if the <tt>i</tt><sup>th</sup> rule for <tt>A</tt>
+ *                 is annotated, then <tt>X<sub>i</sub></tt>
+ *                 is the XML type of the single XML element specified by
+ *                 the annotation;
+ *
+ *         <p><li> otherwise, <tt>X<sub>i</sub></tt> is the <u><i>concatenation</i></u>
+ *                 of those of the <tt>A<sup>i</sup><sub>j</sub></tt>'s (for
+ *                 <tt>0&le;j&le;<sub>n<sub>i</sub></sub></tt>).
+ *         </ul>
+ *
+ * </ul>
+ * 
+ *
+ * <h3>Computing a DTD by fix-point closure of regular expressions</h3>
+ *
+ * The idea is simply to iterate the above step until a fix point is
+ * reached (<i>i.e.</i>, until no change occurs in any of the computed
+ * <tt>_xmlFormType</tt>'s from one iteration to the next). Therefore,
+ * in order to enable effective comparison of RE's, the
+ * <tt>_xmlFormType</tt>'s are kept in <i><u>normal</u></i> form.
+ *
+ * <h4>Example</h4>
+ *
+ * Consider the following annotated grammar:
+ *
+ * <font color="blue">
+ * <pre>
+ * Sexp : Atom
+ *      | '(' List ')' <font color="red">[ LO: List   CH: (2) ]</font>
+ *      ;
+ *
+ * Atom : NUMBER     <font color="red">[ LO: Number AT: {value = &#36;VALUE} ]</font>
+ *      | NAME       <font color="red">[ LO: Name   AT: {value = &#36;VALUE} ]</font>
+ *      | NIL        <font color="red">[ LO: Nil ]</font>
+ *      ;
+ *
+ * List :            <font color="red">[ LO: Nil ]</font>
+ *      | List Sexp
+ *      ;
+ * </pre>
+ * </font>
+ *
+ *
+ *
+ * <p>
+ * 
+ */

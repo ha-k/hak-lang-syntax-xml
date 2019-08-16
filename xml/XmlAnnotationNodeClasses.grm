@@ -1,0 +1,159 @@
+// FILE. . . . . /home/hak/hlt/src/hlt/language/syntax/xml/XmlAnnotationNodeClasses.grm
+// EDIT BY . . . Hassan Ait-Kaci
+// ON MACHINE. . 4j4zn71
+// STARTED ON. . Sat Apr 12 18:01:09 2008
+
+// Last modified on Tue Jun 19 18:03:43 2012 by hak
+
+////////////////////////////////////////////////////////////////////////
+
+/**
+ * A <tt>$WrapperPath_opt$</tt> stores the sequence of wrappers
+ * making up a <tt>$WrapperPath$</tt> in an <tt>ArrayList</tt>
+ * called <tt>wrapperPath</tt>.
+ */
+%nodeclass WrapperPath_opt
+  {
+    ArrayList wrapperPath = null;
+  }
+
+%nodeclass WrapperPath extends WrapperPath_opt
+  {
+    // Set wrapperPath to a new list and add to it the XML wrapper
+    // (the symbol and its distribution switch):
+    void add (String s, boolean b)
+      {
+	(wrapperPath = new ArrayList()).add(new XmlWrapper(s,b));
+      }
+
+    // Set wrapperPath to the specified path, and add to it the XML
+    // wrapper (the symbol and its distribution switch):
+    void addTo (ArrayList path, String s, boolean b)
+      {
+	(wrapperPath = path).add(new XmlWrapper(s,b));
+      }
+  }
+
+/**
+ * A <tt>$ChildXmlTree$</tt> has the following fields:
+ * <ul>
+ * <li> <tt>cstChildPosition</tt>: an <tt>int</tt> - a CST child position;
+ * <li> <tt>xmlPath</tt>: an <tt>IntArrayList</tt> - a (possibly
+ *      <tt>null</tt>) list of XML subtree positions;
+ * <li> <tt>hasTerminalValueContent</tt> - <tt>true</tt> indicates terminal
+ *      value;
+ * <li> <tt>textInfo</tt> - if non-null, an <tt>ArrayList</tt> of
+ *      <tt>XmlTextInfo</tt>s giving the arguments of a <tt>TEXT</tt>
+ *      special form.
+ * </ul>
+ */
+%nodeclass ChildXmlTree
+  {
+    int cstChildPosition;
+    IntArrayList xmlPath = null;    
+    boolean hasTerminalValueContent = false;
+    ArrayList textInfo = null;
+  }
+
+/**
+ * A <tt>$XmlChildSpec$</tt>  is a <tt>$ChildXmlTree$</tt> with
+ * the following additional field:
+ * <ul>
+ * <li> <tt>wrapperPath</tt>, an <tt>ArrayList</tt> - a (possibly
+ *      <tt>null</tt>) list of <tt>XmlWrapper</tt>s. 
+ * </ul>
+ */
+%nodeclass XmlChildSpec extends ChildXmlTree
+  {
+    ArrayList wrapperPath = null;
+  }
+
+/**
+ * A <tt>$XmlTreeRef$</tt> is a <tt>$XmlChildSpec$</tt> with
+ * the following additional field:
+ * <ul>
+ * <li> <tt>attributeName</tt>, a <tt>String</tt> - an
+ *      attribute name.
+ * </ul>
+ */
+%nodeclass XmlTreeRef extends XmlChildSpec
+  {
+    String attributeName = null;
+  }
+
+%nodeclass AttributeName_opt
+  {
+    String attributeName = null;
+  }
+
+%nodeclass AttributeName extends AttributeName_opt
+  {
+  }
+
+////////////////////////////////////////////////////////////////////////
+
+/**
+ * An <tt>$AttributeValue$</tt> is a special case of
+ * <tt>$XmlTreeRef$</tt>.  It has a flag <tt>hasLiteralValueContent</tt>
+ * indicating whether it carries a literal value; when this flag is
+ * <tt>true</tt>, then the literal value is in the <tt>value</tt> field.
+ * 
+ */
+%nodeclass AttributeValue extends XmlTreeRef
+  {
+    boolean hasLiteralValueContent = false;
+    String value = null;
+    ArrayList textInfo = null;
+  }
+
+/**
+ * An <tt>$XmlPath_opt$</tt> stores the sequence of numbers
+ * making up a <tt>$XmlPath$</tt> in an <tt>IntArrayList</tt>
+ * called <tt>xmlPath</tt>.
+ */
+%nodeclass XmlPath_opt
+  {
+    IntArrayList xmlPath = null;
+  }
+
+%nodeclass XmlPath extends XmlPath_opt
+  {
+    // Set xmlPath to a new list and add to it the specififed number.
+    void add (int n)
+      {
+	(xmlPath = new IntArrayList()).add(n);
+      }
+
+    // Set xmlPath to the specified path, and add to it the specififed
+    // number.
+    void addTo (IntArrayList path, int n)
+      {
+	(xmlPath = path).add(n);
+      }
+  }
+
+%nodeclass DotOrStar
+  {
+    boolean isStarred = false;
+  }
+
+%nodeclass TextArgument
+  {
+    XmlTextInfoArg info = null;
+  }
+
+%nodeclass TextRef extends TextArgument
+  {
+  }
+
+%nodeclass TextArguments
+  {
+    ArrayList textInfo = null;
+  }
+
+%nodeclass SpecialForm extends TextArguments
+  {
+    boolean hasTerminalValueContent = false;
+  }
+
+////////////////////////////////////////////////////////////////////////

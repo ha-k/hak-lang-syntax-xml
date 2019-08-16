@@ -1,0 +1,548 @@
+<HTML>
+<HEAD>
+<TITLE>
+XmlAnnotationTokenizer.html
+</TITLE>
+<LINK REL="STYLESHEET" TYPE="text/css" HREF="D:/hak/hlt/classes/resources/Hilite.Style.css">
+</HEAD>
+<BODY BGCOLOR="#CCCFF">
+<CENTER>
+<TABLE BGCOLOR=white WIDTH=50% BORDER=5 CELLPADDING=20>
+<TR><TD ALIGN=CENTER>
+<SPAN STYLE="FONT-SIZE:XX-LARGE"><TT><B>XmlAnnotationTokenizer.java</B></TT></SPAN>
+<P>
+</TD></TR>
+</TABLE>
+</CENTER>
+<PRE>
+<SPAN STYLE="COLOR:#88AA66"><EM>// FILE. . . . . /home/hak/hlt/src/hlt/language/syntax/XmlAnnotationTokenizer.java
+</EM></SPAN><SPAN STYLE="COLOR:#88AA66"><EM>// EDIT BY . . . Hassan Ait-Kaci
+</EM></SPAN><SPAN STYLE="COLOR:#88AA66"><EM>// ON MACHINE. . 4j4zn71
+</EM></SPAN><SPAN STYLE="COLOR:#88AA66"><EM>// STARTED ON. . Fri Mar 16 18:09:23 2007
+</EM></SPAN>
+<SPAN STYLE="COLOR:BROWN"><STRONG>package</STRONG></SPAN> hlt.language.syntax.xml;
+
+
+</PRE>
+<HR>
+<CENTER>
+<TABLE BGCOLOR="WHITE" WIDTH=90% BORDER=1 CELLPADDING=10>
+<TR><TD><SPAN STYLE="COLOR:BLACK">
+
+  This is a tokenizer for the XML annotation parser from the Jacc
+  grammar in <a
+  href="XmlAnnotation.html"><tt>XmlAnnotation.grm</tt></a>. It is
+  rather self-explanatory: simply read the comments and the code below.
+ 
+       
+<P><TABLE>
+<TR><TD VALIGN=TOP><STRONG>Copyright:</STRONG></TD><TD>&nbsp;</TD>
+<TD>&copy; <a href="http://www.hassan-ait-kaci.net/">by the author</a>
+</TD></tr>
+<TR><TD VALIGN=TOP><STRONG>Author:</STRONG></TD><TD>&nbsp;</TD>
+<TD><a href="mailto:hak@acm.org">Hassan A&iuml;t-Kaci</a>
+</TD></tr>
+<TR><TD VALIGN=TOP><STRONG>Version:</STRONG></TD><TD>&nbsp;</TD>
+<TD>Last modified on Wed Jun 20 13:51:44 2012 by hak
+</TD></tr>
+</TABLE>
+
+</SPAN></TD></TR>
+</TABLE>
+</CENTER>
+<P>
+<PRE>
+
+
+<SPAN STYLE="COLOR:BROWN"><STRONG>import</STRONG></SPAN> java.io.<SPAN STYLE="COLOR:#4400DD"><STRONG>Reader</STRONG></SPAN>;
+<SPAN STYLE="COLOR:BROWN"><STRONG>import</STRONG></SPAN> java.io.<SPAN STYLE="COLOR:#4400DD"><STRONG>StringReader</STRONG></SPAN>;
+<SPAN STYLE="COLOR:BROWN"><STRONG>import</STRONG></SPAN> java.io.<SPAN STYLE="COLOR:#4400DD"><STRONG>IOException</STRONG></SPAN>;
+
+<SPAN STYLE="COLOR:BROWN"><STRONG>import</STRONG></SPAN> hlt.language.io.<SPAN STYLE="COLOR:GREEN">IO</SPAN>;
+<SPAN STYLE="COLOR:BROWN"><STRONG>import</STRONG></SPAN> hlt.language.io.<SPAN STYLE="COLOR:#4400DD"><STRONG>StreamTokenizer</STRONG></SPAN>;
+<SPAN STYLE="COLOR:BROWN"><STRONG>import</STRONG></SPAN> hlt.language.syntax.*;
+
+<SPAN STYLE="COLOR:PURPLE"><STRONG>public</STRONG></SPAN> <SPAN STYLE="COLOR:BROWN"><STRONG>class</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>XmlAnnotationTokenizer</STRONG></SPAN> <SPAN STYLE="COLOR:BROWN"><STRONG>implements</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>Tokenizer</STRONG></SPAN>
+<SPAN STYLE="COLOR:#444444">{</SPAN>
+  
+</PRE>
+<HR>
+<CENTER>
+<TABLE BGCOLOR="WHITE" WIDTH=90% BORDER=1 CELLPADDING=10>
+<TR><TD><SPAN STYLE="COLOR:BLACK">
+
+    A constant label used for designating the keyword for the XML <font
+    color="green"><i>namespace prefix</i></font> used by the annotation
+    language.
+   
+    <p>
+   
+    <font size="-1"color="red"><i><b>WARNING</b>: Changing this value will
+    change the syntax of the annotation language, which will then take
+    the new given string value as the new corresponding keyword. As a
+    result, old annotations using the previous keyword will be
+    unprocessable by any XML annotation parser generated from a Jacc
+    grammar for the <a href="XmlAnnotationSpecification.html">XML annotation
+    notation</a> using this tokenizer.<i></font>
+   
+</SPAN></TD></TR>
+</TABLE>
+</CENTER>
+<P>
+<PRE>
+
+  <SPAN STYLE="COLOR:PURPLE"><STRONG>public</STRONG></SPAN> <SPAN STYLE="COLOR:PURPLE"><STRONG>static</STRONG></SPAN> <SPAN STYLE="COLOR:PURPLE"><STRONG>final</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>String</STRONG></SPAN> nsPrefixKey = <SPAN STYLE="COLOR:#D2691E"><EM>"nsprefix"</EM></SPAN>;
+  
+</PRE>
+<HR>
+<CENTER>
+<TABLE BGCOLOR="WHITE" WIDTH=90% BORDER=1 CELLPADDING=10>
+<TR><TD><SPAN STYLE="COLOR:BLACK">
+
+    A constant label used for designating the keyword for the XML <font
+    color="green"><i>local name</i></font> used by the annotation
+    language.
+   
+    <p>
+   
+    <font size="-1"color="red"><i><b>WARNING</b>: Changing this value will
+    change the syntax of the annotation language, which will then take
+    the new given string value as the new corresponding keyword. As a
+    result, old annotations using the previous keyword will be
+    unprocessable by any XML annotation parser generated from a Jacc
+    grammar for the <a href="XmlAnnotationSpecification.html">XML annotation
+    notation</a> using this tokenizer.<i></font>
+   
+</SPAN></TD></TR>
+</TABLE>
+</CENTER>
+<P>
+<PRE>
+
+  <SPAN STYLE="COLOR:PURPLE"><STRONG>public</STRONG></SPAN> <SPAN STYLE="COLOR:PURPLE"><STRONG>static</STRONG></SPAN> <SPAN STYLE="COLOR:PURPLE"><STRONG>final</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>String</STRONG></SPAN> localNameKey = <SPAN STYLE="COLOR:#D2691E"><EM>"localname"</EM></SPAN>;
+  
+</PRE>
+<HR>
+<CENTER>
+<TABLE BGCOLOR="WHITE" WIDTH=90% BORDER=1 CELLPADDING=10>
+<TR><TD><SPAN STYLE="COLOR:BLACK">
+
+    A constant label used for designating the keyword for the XML <font
+    color="green"><i>attributes name</i></font> used by the annotation
+    language.
+   
+    <p>
+   
+    <font size="-1"color="red"><i><b>WARNING</b>: Changing this value will
+    change the syntax of the annotation language, which will then take
+    the new given string value as the new corresponding keyword. As a
+    result, old annotations using the previous keyword will be
+    unprocessable by any XML annotation parser generated from a Jacc
+    grammar for the <a href="XmlAnnotationSpecification.html">XML annotation
+    notation</a> using this tokenizer.<i></font>
+   
+</SPAN></TD></TR>
+</TABLE>
+</CENTER>
+<P>
+<PRE>
+
+  <SPAN STYLE="COLOR:PURPLE"><STRONG>public</STRONG></SPAN> <SPAN STYLE="COLOR:PURPLE"><STRONG>static</STRONG></SPAN> <SPAN STYLE="COLOR:PURPLE"><STRONG>final</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>String</STRONG></SPAN> attributesKey = <SPAN STYLE="COLOR:#D2691E"><EM>"attributes"</EM></SPAN>;
+  
+</PRE>
+<HR>
+<CENTER>
+<TABLE BGCOLOR="WHITE" WIDTH=90% BORDER=1 CELLPADDING=10>
+<TR><TD><SPAN STYLE="COLOR:BLACK">
+
+    A constant label used for designating the keyword for the XML <font
+    color="green"><i>children</i></font> used by the annotation
+    language.
+   
+    <p>
+   
+    <font size="-1"color="red"><i><b>WARNING</b>: Changing this value will
+    change the syntax of the annotation language, which will then take
+    the new given string value as the new corresponding keyword. As a
+    result, old annotations using the previous keyword will be
+    unprocessable by any XML annotation parser generated from a Jacc
+    grammar for the <a href="XmlAnnotationSpecification.html">XML annotation
+    notation</a> using this tokenizer.<i></font>
+   
+</SPAN></TD></TR>
+</TABLE>
+</CENTER>
+<P>
+<PRE>
+
+  <SPAN STYLE="COLOR:PURPLE"><STRONG>public</STRONG></SPAN> <SPAN STYLE="COLOR:PURPLE"><STRONG>static</STRONG></SPAN> <SPAN STYLE="COLOR:PURPLE"><STRONG>final</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>String</STRONG></SPAN> childrenKey = <SPAN STYLE="COLOR:#D2691E"><EM>"children"</EM></SPAN>;
+
+  <SPAN STYLE="COLOR:#88AA66"><EM>//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
+</EM></SPAN>
+  
+</PRE>
+<HR>
+<CENTER>
+<TABLE BGCOLOR="WHITE" WIDTH=90% BORDER=1 CELLPADDING=10>
+<TR><TD><SPAN STYLE="COLOR:BLACK">
+
+    An <tt>int</tt> to store the line number. This is not actually used
+    for now, but will be needed eventually. (See comment for this
+    class' <tt>locate</tt> method.)
+   
+</SPAN></TD></TR>
+</TABLE>
+</CENTER>
+<P>
+<PRE>
+
+  <SPAN STYLE="COLOR:BLUE"><STRONG>int</STRONG></SPAN> lineno;
+  
+</PRE>
+<HR>
+<CENTER>
+<TABLE BGCOLOR="WHITE" WIDTH=90% BORDER=1 CELLPADDING=10>
+<TR><TD><SPAN STYLE="COLOR:BLACK">
+
+    The <tt>Reader</tt> to read from.
+   
+</SPAN></TD></TR>
+</TABLE>
+</CENTER>
+<P>
+<PRE>
+
+  <SPAN STYLE="COLOR:#4400DD"><STRONG>Reader</STRONG></SPAN> reader;
+  
+</PRE>
+<HR>
+<CENTER>
+<TABLE BGCOLOR="WHITE" WIDTH=90% BORDER=1 CELLPADDING=10>
+<TR><TD><SPAN STYLE="COLOR:BLACK">
+
+    The <tt>StreamTokenizer</tt> reading off the reader.
+   
+</SPAN></TD></TR>
+</TABLE>
+</CENTER>
+<P>
+<PRE>
+
+  <SPAN STYLE="COLOR:#4400DD"><STRONG>StreamTokenizer</STRONG></SPAN> st;
+
+  
+</PRE>
+<HR>
+<CENTER>
+<TABLE BGCOLOR="WHITE" WIDTH=90% BORDER=1 CELLPADDING=10>
+<TR><TD><SPAN STYLE="COLOR:BLACK">
+
+    Constructs an <tt>XmlAnnotationTokenizer</tt> with the
+    specified annotation string.
+   
+</SPAN></TD></TR>
+</TABLE>
+</CENTER>
+<P>
+<PRE>
+
+  <SPAN STYLE="COLOR:PURPLE"><STRONG>public</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>XmlAnnotationTokenizer</STRONG></SPAN> <SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#4400DD"><STRONG>String</STRONG></SPAN> annotation<SPAN STYLE="COLOR:#444444">)</SPAN>
+    <SPAN STYLE="COLOR:#444444">{</SPAN>
+      setInput<SPAN STYLE="COLOR:#444444">(</SPAN>annotation<SPAN STYLE="COLOR:#444444">)</SPAN>;
+    <SPAN STYLE="COLOR:#444444">}</SPAN>
+
+  
+</PRE>
+<HR>
+<CENTER>
+<TABLE BGCOLOR="WHITE" WIDTH=90% BORDER=1 CELLPADDING=10>
+<TR><TD><SPAN STYLE="COLOR:BLACK">
+
+    Sets the input reader to read from the specified annotation string.
+   
+</SPAN></TD></TR>
+</TABLE>
+</CENTER>
+<P>
+<PRE>
+
+  <SPAN STYLE="COLOR:PURPLE"><STRONG>public</STRONG></SPAN> <SPAN STYLE="COLOR:PURPLE"><STRONG>final</STRONG></SPAN> <SPAN STYLE="COLOR:BLUE"><STRONG>void</STRONG></SPAN> setInput <SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#4400DD"><STRONG>String</STRONG></SPAN> annotation<SPAN STYLE="COLOR:#444444">)</SPAN>
+    <SPAN STYLE="COLOR:#444444">{</SPAN>
+      setReader<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:BROWN"><STRONG>new</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>StringReader</STRONG></SPAN><SPAN STYLE="COLOR:#444444">(</SPAN>annotation<SPAN STYLE="COLOR:#444444">)</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>;
+    <SPAN STYLE="COLOR:#444444">}</SPAN>
+
+  
+</PRE>
+<HR>
+<CENTER>
+<TABLE BGCOLOR="WHITE" WIDTH=90% BORDER=1 CELLPADDING=10>
+<TR><TD><SPAN STYLE="COLOR:BLACK">
+
+    Sets up the reader and the stream tokenizer, and configures the
+    stream tokenizer as follow:
+    <ul>
+    <li> it considers all the following characters ordinary:<br>
+         <font color="blue"><b><tt>
+         ? $ + - . ( ) { } [ ] &lt; &gt; : ; , = ! &amp; | * % /
+         </tt></b></font>
+    <li> it recognizes quoted strings using either single or double
+         quotes;
+    <li> it considers the characters: <font
+         color="blue"><b><tt>_@</tt></b></font> as part of word identifiers
+         (<i>i.e.</i>, as letters);
+    <li> it recognizes  unsigned whole numbers (but no floating
+         points).
+    </ul>
+   
+</SPAN></TD></TR>
+</TABLE>
+</CENTER>
+<P>
+<PRE>
+
+  <SPAN STYLE="COLOR:PURPLE"><STRONG>public</STRONG></SPAN> <SPAN STYLE="COLOR:PURPLE"><STRONG>final</STRONG></SPAN> <SPAN STYLE="COLOR:BLUE"><STRONG>void</STRONG></SPAN> setReader <SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#4400DD"><STRONG>Reader</STRONG></SPAN> rd<SPAN STYLE="COLOR:#444444">)</SPAN>
+    <SPAN STYLE="COLOR:#444444">{</SPAN>
+      reader = rd;
+      st = <SPAN STYLE="COLOR:BROWN"><STRONG>new</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>StreamTokenizer</STRONG></SPAN><SPAN STYLE="COLOR:#444444">(</SPAN>reader<SPAN STYLE="COLOR:#444444">)</SPAN>;
+      <SPAN STYLE="COLOR:#88AA66"><EM>// parse unsigned whole numbers only:
+</EM></SPAN>      st.parseDigitsOnly<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>;
+      <SPAN STYLE="COLOR:#88AA66"><EM>// make the specified characters ordinary:
+</EM></SPAN>      st.ordinaryChars<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#D2691E"><EM>"?$+-.(){}[]&lt;&gt;:;,=!&amp;|*%/"</EM></SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>;
+      <SPAN STYLE="COLOR:#88AA66"><EM>// make the single quote a string quote character:
+</EM></SPAN>      st.quoteChar<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#D2691E"><EM>'\''</EM></SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>;
+      <SPAN STYLE="COLOR:#88AA66"><EM>// make the double quote a string quote character:
+</EM></SPAN>      st.quoteChar<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#D2691E"><EM>'"'</EM></SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>;
+      <SPAN STYLE="COLOR:#88AA66"><EM>// make the specified characters letter word characters:
+</EM></SPAN>      st.wordChars<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#D2691E"><EM>"_@"</EM></SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>;
+    <SPAN STYLE="COLOR:#444444">}</SPAN>
+
+  <SPAN STYLE="COLOR:PURPLE"><STRONG>public</STRONG></SPAN> <SPAN STYLE="COLOR:PURPLE"><STRONG>final</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>Reader</STRONG></SPAN> getReader <SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>
+    <SPAN STYLE="COLOR:#444444">{</SPAN>
+      <SPAN STYLE="COLOR:BROWN"><STRONG>return</STRONG></SPAN> reader;
+    <SPAN STYLE="COLOR:#444444">}</SPAN>
+
+  
+</PRE>
+<HR>
+<CENTER>
+<TABLE BGCOLOR="WHITE" WIDTH=90% BORDER=1 CELLPADDING=10>
+<TR><TD><SPAN STYLE="COLOR:BLACK">
+
+    This method is required for this class. It returns <tt>lineno</tt>.
+    It is not actually used for now, but will be needed
+    eventually. (See comment for this class' <tt>locate</tt> method.)
+   
+</SPAN></TD></TR>
+</TABLE>
+</CENTER>
+<P>
+<PRE>
+
+  <SPAN STYLE="COLOR:PURPLE"><STRONG>public</STRONG></SPAN> <SPAN STYLE="COLOR:PURPLE"><STRONG>final</STRONG></SPAN> <SPAN STYLE="COLOR:BLUE"><STRONG>int</STRONG></SPAN> lineNumber<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>
+    <SPAN STYLE="COLOR:#444444">{</SPAN>
+      <SPAN STYLE="COLOR:BROWN"><STRONG>return</STRONG></SPAN> lineno;
+    <SPAN STYLE="COLOR:#444444">}</SPAN>
+
+  
+</PRE>
+<HR>
+<CENTER>
+<TABLE BGCOLOR="WHITE" WIDTH=90% BORDER=1 CELLPADDING=10>
+<TR><TD><SPAN STYLE="COLOR:BLACK">
+
+    This is the identity function: for now, we can't really locate
+    any node without the contextual information coming from the
+    <tt>hlt.language.syntax.Grammar</tt> class. Todo for later.
+   
+</SPAN></TD></TR>
+</TABLE>
+</CENTER>
+<P>
+<PRE>
+
+  <SPAN STYLE="COLOR:PURPLE"><STRONG>final</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>ParseNode</STRONG></SPAN> locate <SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#4400DD"><STRONG>ParseNode</STRONG></SPAN> node<SPAN STYLE="COLOR:#444444">)</SPAN>
+    <SPAN STYLE="COLOR:#444444">{</SPAN>
+      <SPAN STYLE="COLOR:BROWN"><STRONG>return</STRONG></SPAN> node;
+    <SPAN STYLE="COLOR:#444444">}</SPAN>
+
+  <SPAN STYLE="COLOR:PURPLE"><STRONG>final</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>ParseNode</STRONG></SPAN> position <SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>
+    <SPAN STYLE="COLOR:#444444">{</SPAN>
+      <SPAN STYLE="COLOR:BROWN"><STRONG>return</STRONG></SPAN> locate<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#4400DD"><STRONG>XmlAnnotationParser</STRONG></SPAN>.numberToken<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#D2691E"><EM>"POSITION"</EM></SPAN>,<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:BLUE"><STRONG>int</STRONG></SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>st.nval<SPAN STYLE="COLOR:#444444">)</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>;
+    <SPAN STYLE="COLOR:#444444">}</SPAN>
+
+  <SPAN STYLE="COLOR:PURPLE"><STRONG>final</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>ParseNode</STRONG></SPAN> symbol <SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#4400DD"><STRONG>String</STRONG></SPAN> symbol<SPAN STYLE="COLOR:#444444">)</SPAN>
+    <SPAN STYLE="COLOR:#444444">{</SPAN>
+      <SPAN STYLE="COLOR:BROWN"><STRONG>return</STRONG></SPAN> locate<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#4400DD"><STRONG>XmlAnnotationParser</STRONG></SPAN>.symbolToken<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#D2691E"><EM>"SYMBOL"</EM></SPAN>,symbol<SPAN STYLE="COLOR:#444444">)</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>;
+    <SPAN STYLE="COLOR:#444444">}</SPAN>
+
+  <SPAN STYLE="COLOR:PURPLE"><STRONG>final</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>ParseNode</STRONG></SPAN> keyValSep <SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>
+    <SPAN STYLE="COLOR:#444444">{</SPAN>
+      <SPAN STYLE="COLOR:BROWN"><STRONG>return</STRONG></SPAN> locate<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#4400DD"><STRONG>XmlAnnotationParser</STRONG></SPAN>.literalToken<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#D2691E"><EM>"KEYVALSEP"</EM></SPAN><SPAN STYLE="COLOR:#444444">)</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>;
+    <SPAN STYLE="COLOR:#444444">}</SPAN>
+
+  <SPAN STYLE="COLOR:PURPLE"><STRONG>final</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>ParseNode</STRONG></SPAN> listSep <SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>
+    <SPAN STYLE="COLOR:#444444">{</SPAN>
+      <SPAN STYLE="COLOR:BROWN"><STRONG>return</STRONG></SPAN> locate<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#4400DD"><STRONG>XmlAnnotationParser</STRONG></SPAN>.literalToken<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#D2691E"><EM>"LISTSEP"</EM></SPAN><SPAN STYLE="COLOR:#444444">)</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>;
+    <SPAN STYLE="COLOR:#444444">}</SPAN>
+
+  <SPAN STYLE="COLOR:PURPLE"><STRONG>final</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>ParseNode</STRONG></SPAN> dot <SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>
+    <SPAN STYLE="COLOR:#444444">{</SPAN>
+      <SPAN STYLE="COLOR:BROWN"><STRONG>return</STRONG></SPAN> locate<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#4400DD"><STRONG>XmlAnnotationParser</STRONG></SPAN>.literalToken<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#D2691E"><EM>"DOT"</EM></SPAN><SPAN STYLE="COLOR:#444444">)</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>;
+    <SPAN STYLE="COLOR:#444444">}</SPAN>
+
+  <SPAN STYLE="COLOR:PURPLE"><STRONG>final</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>ParseNode</STRONG></SPAN> star <SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>
+    <SPAN STYLE="COLOR:#444444">{</SPAN>
+      <SPAN STYLE="COLOR:BROWN"><STRONG>return</STRONG></SPAN> locate<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#4400DD"><STRONG>XmlAnnotationParser</STRONG></SPAN>.literalToken<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#D2691E"><EM>"STAR"</EM></SPAN><SPAN STYLE="COLOR:#444444">)</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>;
+    <SPAN STYLE="COLOR:#444444">}</SPAN>
+
+  <SPAN STYLE="COLOR:PURPLE"><STRONG>final</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>ParseNode</STRONG></SPAN> slash <SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>
+    <SPAN STYLE="COLOR:#444444">{</SPAN>
+      <SPAN STYLE="COLOR:BROWN"><STRONG>return</STRONG></SPAN> locate<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#4400DD"><STRONG>XmlAnnotationParser</STRONG></SPAN>.literalToken<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#D2691E"><EM>"SLASH"</EM></SPAN><SPAN STYLE="COLOR:#444444">)</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>;
+    <SPAN STYLE="COLOR:#444444">}</SPAN>
+
+  <SPAN STYLE="COLOR:PURPLE"><STRONG>final</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>ParseNode</STRONG></SPAN> value <SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>
+    <SPAN STYLE="COLOR:#444444">{</SPAN>
+      <SPAN STYLE="COLOR:BROWN"><STRONG>return</STRONG></SPAN> locate<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#4400DD"><STRONG>XmlAnnotationParser</STRONG></SPAN>.literalToken<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#D2691E"><EM>"VALUE"</EM></SPAN><SPAN STYLE="COLOR:#444444">)</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>;
+    <SPAN STYLE="COLOR:#444444">}</SPAN>
+
+  <SPAN STYLE="COLOR:PURPLE"><STRONG>final</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>ParseNode</STRONG></SPAN> text <SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>
+    <SPAN STYLE="COLOR:#444444">{</SPAN>
+      <SPAN STYLE="COLOR:BROWN"><STRONG>return</STRONG></SPAN> locate<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#4400DD"><STRONG>XmlAnnotationParser</STRONG></SPAN>.literalToken<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#D2691E"><EM>"TEXT"</EM></SPAN><SPAN STYLE="COLOR:#444444">)</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>;
+    <SPAN STYLE="COLOR:#444444">}</SPAN>
+
+  <SPAN STYLE="COLOR:BLUE"><STRONG>boolean</STRONG></SPAN> hasNsPrefix = <SPAN STYLE="COLOR:GREEN">false</SPAN>;
+  <SPAN STYLE="COLOR:BLUE"><STRONG>boolean</STRONG></SPAN> hasLocalName = <SPAN STYLE="COLOR:GREEN">false</SPAN>;
+  <SPAN STYLE="COLOR:BLUE"><STRONG>boolean</STRONG></SPAN> hasAttributes = <SPAN STYLE="COLOR:GREEN">false</SPAN>;
+  <SPAN STYLE="COLOR:BLUE"><STRONG>boolean</STRONG></SPAN> hasChildren = <SPAN STYLE="COLOR:GREEN">false</SPAN>;
+
+  <SPAN STYLE="COLOR:PURPLE"><STRONG>final</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>ParseNode</STRONG></SPAN> keywordOrSymbol <SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#4400DD"><STRONG>String</STRONG></SPAN> symbol<SPAN STYLE="COLOR:#444444">)</SPAN>
+    <SPAN STYLE="COLOR:#444444">{</SPAN>
+      <SPAN STYLE="COLOR:BROWN"><STRONG>if</STRONG></SPAN> <SPAN STYLE="COLOR:#444444">(</SPAN>!hasNsPrefix &amp;&amp; isPrefixOf<SPAN STYLE="COLOR:#444444">(</SPAN>symbol,nsPrefixKey<SPAN STYLE="COLOR:#444444">)</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>
+	<SPAN STYLE="COLOR:#444444">{</SPAN>
+	  hasNsPrefix = <SPAN STYLE="COLOR:GREEN">true</SPAN>;
+	  <SPAN STYLE="COLOR:BROWN"><STRONG>return</STRONG></SPAN> literal<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#D2691E"><EM>"NSPREFIX"</EM></SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>;
+	<SPAN STYLE="COLOR:#444444">}</SPAN>
+
+      <SPAN STYLE="COLOR:BROWN"><STRONG>if</STRONG></SPAN> <SPAN STYLE="COLOR:#444444">(</SPAN>!hasLocalName &amp;&amp; isPrefixOf<SPAN STYLE="COLOR:#444444">(</SPAN>symbol,localNameKey<SPAN STYLE="COLOR:#444444">)</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>
+	<SPAN STYLE="COLOR:#444444">{</SPAN>
+	  hasLocalName = <SPAN STYLE="COLOR:GREEN">true</SPAN>;
+	  <SPAN STYLE="COLOR:BROWN"><STRONG>return</STRONG></SPAN> literal<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#D2691E"><EM>"LOCALNAME"</EM></SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>;
+	<SPAN STYLE="COLOR:#444444">}</SPAN>
+
+      <SPAN STYLE="COLOR:BROWN"><STRONG>if</STRONG></SPAN> <SPAN STYLE="COLOR:#444444">(</SPAN>!hasAttributes &amp;&amp; isPrefixOf<SPAN STYLE="COLOR:#444444">(</SPAN>symbol,attributesKey<SPAN STYLE="COLOR:#444444">)</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>
+	<SPAN STYLE="COLOR:#444444">{</SPAN>
+	  hasAttributes = <SPAN STYLE="COLOR:GREEN">true</SPAN>;
+	  <SPAN STYLE="COLOR:BROWN"><STRONG>return</STRONG></SPAN> literal<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#D2691E"><EM>"ATTRIBUTES"</EM></SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>;
+	<SPAN STYLE="COLOR:#444444">}</SPAN>
+
+      <SPAN STYLE="COLOR:BROWN"><STRONG>if</STRONG></SPAN> <SPAN STYLE="COLOR:#444444">(</SPAN>!hasChildren &amp;&amp; isPrefixOf<SPAN STYLE="COLOR:#444444">(</SPAN>symbol,childrenKey<SPAN STYLE="COLOR:#444444">)</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>
+	<SPAN STYLE="COLOR:#444444">{</SPAN>
+	  hasChildren = <SPAN STYLE="COLOR:GREEN">true</SPAN>;
+	  <SPAN STYLE="COLOR:BROWN"><STRONG>return</STRONG></SPAN> literal<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#D2691E"><EM>"CHILDREN"</EM></SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>;
+	<SPAN STYLE="COLOR:#444444">}</SPAN>
+
+      <SPAN STYLE="COLOR:BROWN"><STRONG>return</STRONG></SPAN> symbol<SPAN STYLE="COLOR:#444444">(</SPAN>symbol<SPAN STYLE="COLOR:#444444">)</SPAN>;
+    <SPAN STYLE="COLOR:#444444">}</SPAN>
+
+  <SPAN STYLE="COLOR:PURPLE"><STRONG>final</STRONG></SPAN> <SPAN STYLE="COLOR:BLUE"><STRONG>boolean</STRONG></SPAN> isPrefixOf <SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#4400DD"><STRONG>String</STRONG></SPAN> prefix, <SPAN STYLE="COLOR:#4400DD"><STRONG>String</STRONG></SPAN> word<SPAN STYLE="COLOR:#444444">)</SPAN>
+    <SPAN STYLE="COLOR:#444444">{</SPAN>
+      <SPAN STYLE="COLOR:BROWN"><STRONG>return</STRONG></SPAN> prefix == word
+	  || prefix.length<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN> != <SPAN STYLE="COLOR:#33AA33">0</SPAN>
+	     &amp;&amp; word.toLowerCase<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>.startsWith<SPAN STYLE="COLOR:#444444">(</SPAN>prefix.toLowerCase<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>;
+    <SPAN STYLE="COLOR:#444444">}</SPAN>
+  
+  <SPAN STYLE="COLOR:PURPLE"><STRONG>final</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>ParseNode</STRONG></SPAN> literal <SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:BLUE"><STRONG>int</STRONG></SPAN> c<SPAN STYLE="COLOR:#444444">)</SPAN>
+    <SPAN STYLE="COLOR:#444444">{</SPAN>
+      <SPAN STYLE="COLOR:BROWN"><STRONG>return</STRONG></SPAN> locate<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#4400DD"><STRONG>XmlAnnotationParser</STRONG></SPAN>.literalToken<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#4400DD"><STRONG>String</STRONG></SPAN>.valueOf<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:BLUE"><STRONG>char</STRONG></SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>c<SPAN STYLE="COLOR:#444444">)</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>;
+    <SPAN STYLE="COLOR:#444444">}</SPAN>
+
+  <SPAN STYLE="COLOR:PURPLE"><STRONG>final</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>ParseNode</STRONG></SPAN> literal <SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#4400DD"><STRONG>String</STRONG></SPAN> s<SPAN STYLE="COLOR:#444444">)</SPAN>
+    <SPAN STYLE="COLOR:#444444">{</SPAN>
+      <SPAN STYLE="COLOR:BROWN"><STRONG>return</STRONG></SPAN> locate<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#4400DD"><STRONG>XmlAnnotationParser</STRONG></SPAN>.literalToken<SPAN STYLE="COLOR:#444444">(</SPAN>s<SPAN STYLE="COLOR:#444444">)</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>;
+    <SPAN STYLE="COLOR:#444444">}</SPAN>
+
+  <SPAN STYLE="COLOR:PURPLE"><STRONG>public</STRONG></SPAN> <SPAN STYLE="COLOR:PURPLE"><STRONG>final</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>ParseNode</STRONG></SPAN> nextToken <SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN> <SPAN STYLE="COLOR:BROWN"><STRONG>throws</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>IOException</STRONG></SPAN>
+    <SPAN STYLE="COLOR:#444444">{</SPAN>
+      <SPAN STYLE="COLOR:#4400DD"><STRONG>ParseNode</STRONG></SPAN> t = <SPAN STYLE="COLOR:GREEN">null</SPAN>;
+      <SPAN STYLE="COLOR:BLUE"><STRONG>int</STRONG></SPAN> tk = st.nextToken<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>;
+      <SPAN STYLE="COLOR:BLUE"><STRONG>int</STRONG></SPAN> nextChar = st.peek<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>;
+      lineno = st.lineno<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>;
+
+      <SPAN STYLE="COLOR:BROWN"><STRONG>switch</STRONG></SPAN> <SPAN STYLE="COLOR:#444444">(</SPAN>tk<SPAN STYLE="COLOR:#444444">)</SPAN>
+        <SPAN STYLE="COLOR:#444444">{</SPAN>
+        <SPAN STYLE="COLOR:BROWN"><STRONG>case</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>StreamTokenizer</STRONG></SPAN>.<SPAN STYLE="COLOR:GREEN">TT_SPECIAL</SPAN>:
+          <SPAN STYLE="COLOR:BROWN"><STRONG>return</STRONG></SPAN> nextToken<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>;
+        <SPAN STYLE="COLOR:BROWN"><STRONG>case</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>StreamTokenizer</STRONG></SPAN>.<SPAN STYLE="COLOR:GREEN">TT_EOF</SPAN>:
+          t = locate<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#4400DD"><STRONG>XmlAnnotationParser</STRONG></SPAN>.eoi<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>;
+          <SPAN STYLE="COLOR:BROWN"><STRONG>break</STRONG></SPAN>;
+        <SPAN STYLE="COLOR:BROWN"><STRONG>case</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>StreamTokenizer</STRONG></SPAN>.<SPAN STYLE="COLOR:GREEN">TT_NUMBER</SPAN>:
+          t = position<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>;
+          <SPAN STYLE="COLOR:BROWN"><STRONG>break</STRONG></SPAN>;
+        <SPAN STYLE="COLOR:BROWN"><STRONG>case</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>StreamTokenizer</STRONG></SPAN>.<SPAN STYLE="COLOR:GREEN">TT_WORD</SPAN>:
+	  t = keywordOrSymbol<SPAN STYLE="COLOR:#444444">(</SPAN>st.sval<SPAN STYLE="COLOR:#444444">)</SPAN>;
+	  <SPAN STYLE="COLOR:BROWN"><STRONG>break</STRONG></SPAN>;
+        <SPAN STYLE="COLOR:BROWN"><STRONG>case</STRONG></SPAN> <SPAN STYLE="COLOR:GREEN">IO</SPAN>.<SPAN STYLE="COLOR:GREEN">SQT</SPAN>: <SPAN STYLE="COLOR:BROWN"><STRONG>case</STRONG></SPAN> <SPAN STYLE="COLOR:GREEN">IO</SPAN>.<SPAN STYLE="COLOR:GREEN">DQT</SPAN>:
+	  t = symbol<SPAN STYLE="COLOR:#444444">(</SPAN>st.sval<SPAN STYLE="COLOR:#444444">)</SPAN>;
+          <SPAN STYLE="COLOR:BROWN"><STRONG>break</STRONG></SPAN>;
+	<SPAN STYLE="COLOR:BROWN"><STRONG>case</STRONG></SPAN> <SPAN STYLE="COLOR:#D2691E"><EM>'$'</EM></SPAN>:
+	  <SPAN STYLE="COLOR:BROWN"><STRONG>if</STRONG></SPAN> <SPAN STYLE="COLOR:#444444">(</SPAN>st.nextToken<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN> == <SPAN STYLE="COLOR:#4400DD"><STRONG>StreamTokenizer</STRONG></SPAN>.<SPAN STYLE="COLOR:GREEN">TT_WORD</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>
+	    <SPAN STYLE="COLOR:BROWN"><STRONG>if</STRONG></SPAN> <SPAN STYLE="COLOR:#444444">(</SPAN>st.sval == <SPAN STYLE="COLOR:#D2691E"><EM>"value"</EM></SPAN> || st.sval == <SPAN STYLE="COLOR:#D2691E"><EM>"VALUE"</EM></SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>
+	      t = value<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>;
+	    <SPAN STYLE="COLOR:BROWN"><STRONG>else</STRONG></SPAN>
+	      <SPAN STYLE="COLOR:BROWN"><STRONG>if</STRONG></SPAN> <SPAN STYLE="COLOR:#444444">(</SPAN>st.sval == <SPAN STYLE="COLOR:#D2691E"><EM>"text"</EM></SPAN> || st.sval == <SPAN STYLE="COLOR:#D2691E"><EM>"TEXT"</EM></SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>
+		t = text<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>;
+	  <SPAN STYLE="COLOR:BROWN"><STRONG>else</STRONG></SPAN>
+	    <SPAN STYLE="COLOR:#444444">{</SPAN>
+	      st.pushBack<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>;
+	      t = literal<SPAN STYLE="COLOR:#444444">(</SPAN>tk<SPAN STYLE="COLOR:#444444">)</SPAN>;
+	    <SPAN STYLE="COLOR:#444444">}</SPAN>
+	  <SPAN STYLE="COLOR:BROWN"><STRONG>break</STRONG></SPAN>;
+        <SPAN STYLE="COLOR:BROWN"><STRONG>case</STRONG></SPAN> <SPAN STYLE="COLOR:#D2691E"><EM>':'</EM></SPAN>:
+	  t = keyValSep<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>;
+	  <SPAN STYLE="COLOR:BROWN"><STRONG>break</STRONG></SPAN>;	  
+        <SPAN STYLE="COLOR:BROWN"><STRONG>case</STRONG></SPAN> <SPAN STYLE="COLOR:#D2691E"><EM>'='</EM></SPAN>:
+	  <SPAN STYLE="COLOR:BROWN"><STRONG>if</STRONG></SPAN> <SPAN STYLE="COLOR:#444444">(</SPAN>st.peek<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN> == <SPAN STYLE="COLOR:#D2691E"><EM>'&gt;'</EM></SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>
+	    <SPAN STYLE="COLOR:#444444">{</SPAN>
+	      t = keyValSep<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>;
+	      st.nextToken<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>;
+	    <SPAN STYLE="COLOR:#444444">}</SPAN>
+	  <SPAN STYLE="COLOR:BROWN"><STRONG>else</STRONG></SPAN>
+	    t = keyValSep<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>;
+	  <SPAN STYLE="COLOR:BROWN"><STRONG>break</STRONG></SPAN>;	  
+        <SPAN STYLE="COLOR:BROWN"><STRONG>case</STRONG></SPAN> <SPAN STYLE="COLOR:#D2691E"><EM>'-'</EM></SPAN>:
+	  <SPAN STYLE="COLOR:BROWN"><STRONG>if</STRONG></SPAN> <SPAN STYLE="COLOR:#444444">(</SPAN>st.peek<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN> == <SPAN STYLE="COLOR:#D2691E"><EM>'&gt;'</EM></SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>
+	    <SPAN STYLE="COLOR:#444444">{</SPAN>
+	      t = keyValSep<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>;
+	      st.nextToken<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>;
+	      <SPAN STYLE="COLOR:BROWN"><STRONG>break</STRONG></SPAN>;
+	    <SPAN STYLE="COLOR:#444444">}</SPAN>
+        <SPAN STYLE="COLOR:BROWN"><STRONG>case</STRONG></SPAN> <SPAN STYLE="COLOR:#D2691E"><EM>'.'</EM></SPAN>:
+	  t = dot<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>;
+	  <SPAN STYLE="COLOR:BROWN"><STRONG>break</STRONG></SPAN>;
+        <SPAN STYLE="COLOR:BROWN"><STRONG>case</STRONG></SPAN> <SPAN STYLE="COLOR:#D2691E"><EM>'*'</EM></SPAN>:
+	  t = star<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>;
+	  <SPAN STYLE="COLOR:BROWN"><STRONG>break</STRONG></SPAN>;
+        <SPAN STYLE="COLOR:BROWN"><STRONG>case</STRONG></SPAN> <SPAN STYLE="COLOR:#D2691E"><EM>'/'</EM></SPAN>:
+	  t = slash<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>;
+	  <SPAN STYLE="COLOR:BROWN"><STRONG>break</STRONG></SPAN>;
+        <SPAN STYLE="COLOR:BROWN"><STRONG>case</STRONG></SPAN> <SPAN STYLE="COLOR:#D2691E"><EM>','</EM></SPAN>: <SPAN STYLE="COLOR:BROWN"><STRONG>case</STRONG></SPAN> <SPAN STYLE="COLOR:#D2691E"><EM>';'</EM></SPAN>:
+	  t = listSep<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>;
+	  <SPAN STYLE="COLOR:BROWN"><STRONG>break</STRONG></SPAN>;
+        <SPAN STYLE="COLOR:BROWN"><STRONG>default</STRONG></SPAN>:
+	  t = literal<SPAN STYLE="COLOR:#444444">(</SPAN>tk<SPAN STYLE="COLOR:#444444">)</SPAN>;
+        <SPAN STYLE="COLOR:#444444">}</SPAN>
+<SPAN STYLE="COLOR:#88AA66"><EM>//       System.out.println("Reading token: "+t);
+</EM></SPAN>      <SPAN STYLE="COLOR:BROWN"><STRONG>return</STRONG></SPAN> t;
+    <SPAN STYLE="COLOR:#444444">}</SPAN>
+<SPAN STYLE="COLOR:#444444">}</SPAN>
+
+
+</PRE>
+<P>
+<HR>
+<P ALIGN="RIGHT"><SPAN STYLE="COLOR:#F07070"><EM>
+This file was generated on Tue Apr 30 07:44:50 CEST 2019 from file <SPAN STYLE="COLOR:BROWN"><KBD>XmlAnnotationTokenizer.java</KBD></SPAN><BR>by the <SPAN STYLE="COLOR:BROWN"><KBD>hlt.language.tools.Hilite</KBD></SPAN> Java tool written by <A HREF="http://hassan-ait-kaci.net">Hassan A&iuml;t-Kaci</A></EM></SPAN>
+<P>
+<HR>
+</BODY>
+</HTML>

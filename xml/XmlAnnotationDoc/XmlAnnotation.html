@@ -1,0 +1,692 @@
+<HTML>
+<HEAD>
+<TITLE>
+XmlAnnotation.html
+</TITLE>
+<LINK REL="STYLESHEET" TYPE="text/css" HREF="D:/hak/hlt/classes/resources/Hilite.Style.css">
+</HEAD>
+<BODY BGCOLOR="#CCCFF">
+<CENTER>
+<TABLE BGCOLOR=white WIDTH=50% BORDER=5 CELLPADDING=20>
+<TR><TD ALIGN=CENTER>
+<SPAN STYLE="FONT-SIZE:XX-LARGE"><TT><B>XmlAnnotation.grm</B></TT></SPAN>
+<P>
+</TD></TR>
+</TABLE>
+</CENTER>
+<PRE>
+<SPAN STYLE="COLOR:#88AA66"><EM>// FILE. . . . . /home/hak/hlt/src/hlt/language/syntax/xml/XmlAnnotation.grm
+</EM></SPAN><SPAN STYLE="COLOR:#88AA66"><EM>// EDIT BY . . . Hassan Ait-Kaci
+</EM></SPAN><SPAN STYLE="COLOR:#88AA66"><EM>// ON MACHINE. . 4j4zn71
+</EM></SPAN><SPAN STYLE="COLOR:#88AA66"><EM>// STARTED ON. . Fri Mar 16 18:13:06 2007
+</EM></SPAN>
+<SPAN STYLE="COLOR:#88AA66"><EM>// Last modified on Tue Jun 19 18:00:21 2012 by hak
+</EM></SPAN>
+
+</PRE>
+<HR>
+<CENTER>
+<TABLE BGCOLOR="WHITE" WIDTH=90% BORDER=1 CELLPADDING=10>
+<TR><TD><SPAN STYLE="COLOR:BLACK">
+
+  <font size="-1"color="red"><b><tt>
+  [Description generated from file <a
+  href="XmlAnnotationSpecification.html"><tt>XmlAnnotationSpecification.grm</tt></a>]
+  </tt></b></font>
+ 
+</SPAN></TD></TR>
+</TABLE>
+</CENTER>
+<P>
+<PRE>
+
+
+<SPAN STYLE="COLOR:#88AA66"><EM>////////////////////////////////////////////////////////////////////////
+</EM></SPAN>
+%<SPAN STYLE="COLOR:BROWN"><STRONG>package</STRONG></SPAN> hlt.language.syntax.xml;
+
+%<SPAN STYLE="COLOR:BROWN"><STRONG>import</STRONG></SPAN> java.util.<SPAN STYLE="COLOR:#4400DD"><STRONG>Iterator</STRONG></SPAN>;
+%<SPAN STYLE="COLOR:BROWN"><STRONG>import</STRONG></SPAN> hlt.language.tools.<SPAN STYLE="COLOR:#4400DD"><STRONG>Misc</STRONG></SPAN>;
+%<SPAN STYLE="COLOR:BROWN"><STRONG>import</STRONG></SPAN> hlt.language.util.<SPAN STYLE="COLOR:#4400DD"><STRONG>ArrayList</STRONG></SPAN>;
+%<SPAN STYLE="COLOR:BROWN"><STRONG>import</STRONG></SPAN> hlt.language.util.<SPAN STYLE="COLOR:#4400DD"><STRONG>IntArrayList</STRONG></SPAN>;
+%<SPAN STYLE="COLOR:BROWN"><STRONG>import</STRONG></SPAN> hlt.language.syntax.<SPAN STYLE="COLOR:#4400DD"><STRONG>XmlWrapper</STRONG></SPAN>;
+
+
+</PRE>
+<HR>
+<CENTER>
+<TABLE BGCOLOR="WHITE" WIDTH=90% BORDER=1 CELLPADDING=10>
+<TR><TD><SPAN STYLE="COLOR:BLACK">
+
+  Including file <a href="XmlAnnotationNodeClasses.html"><tt>XmlAnnotationNodeClasses.grm</tt></a>
+  defining some fields and methods for some non-terminal nodes
+  used in the grammar's semantic actions.
+ 
+</SPAN></TD></TR>
+</TABLE>
+</CENTER>
+<P>
+<PRE>
+
+%include <SPAN STYLE="COLOR:#D2691E"><EM>"XmlAnnotationNodeClasses.grm"</EM></SPAN>
+
+</PRE>
+<HR>
+<CENTER>
+<TABLE BGCOLOR="WHITE" WIDTH=90% BORDER=1 CELLPADDING=10>
+<TR><TD><SPAN STYLE="COLOR:BLACK">
+
+  Including file <a href="XmlAnnotationSpecification.html"><tt>XmlAnnotationSpecification.grm</tt></a>
+  containg the documentation describing the logical design for <tt>Jacc</tt>'s
+  XML serialization annotation notation.
+ 
+</SPAN></TD></TR>
+</TABLE>
+</CENTER>
+<P>
+<PRE>
+
+%include <SPAN STYLE="COLOR:#D2691E"><EM>"XmlAnnotationSpecification.grm"</EM></SPAN>
+
+%access <SPAN STYLE="COLOR:PURPLE"><STRONG>public</STRONG></SPAN>
+
+%start <SPAN STYLE="COLOR:#4400DD"><STRONG>XmlAnnotation</STRONG></SPAN>
+
+%token <SPAN STYLE="COLOR:GREEN">DOT</SPAN> <SPAN STYLE="COLOR:GREEN">STAR</SPAN> <SPAN STYLE="COLOR:GREEN">SLASH</SPAN>
+%token <SPAN STYLE="COLOR:GREEN">POSITION</SPAN> <SPAN STYLE="COLOR:GREEN">SYMBOL</SPAN> <SPAN STYLE="COLOR:GREEN">TEXT</SPAN> <SPAN STYLE="COLOR:GREEN">VALUE</SPAN> <SPAN STYLE="COLOR:GREEN">NSPREFIX</SPAN> <SPAN STYLE="COLOR:GREEN">LOCALNAME</SPAN> <SPAN STYLE="COLOR:GREEN">ATTRIBUTES</SPAN> <SPAN STYLE="COLOR:GREEN">CHILDREN</SPAN> <SPAN STYLE="COLOR:GREEN">LISTSEP</SPAN> <SPAN STYLE="COLOR:GREEN">KEYVALSEP</SPAN>
+
+
+</PRE>
+<HR>
+<CENTER>
+<TABLE BGCOLOR="WHITE" WIDTH=90% BORDER=1 CELLPADDING=10>
+<TR><TD><SPAN STYLE="COLOR:BLACK">
+
+  <font size="-1"color="red"><b><tt>
+  [See also <a
+  href="XmlAnnotationParserCode.html"><tt>XmlAnnotationParserCode.grm</tt></a>]
+  </tt></b></font>
+ 
+</SPAN></TD></TR>
+</TABLE>
+</CENTER>
+<P>
+<PRE>
+
+%include <SPAN STYLE="COLOR:#D2691E"><EM>"XmlAnnotationParserCode.grm"</EM></SPAN>
+
+%%
+
+<SPAN STYLE="COLOR:#4400DD"><STRONG>XmlAnnotation</STRONG></SPAN>
+  : <SPAN STYLE="COLOR:#4400DD"><STRONG>AnnotationPairs</STRONG></SPAN>
+  ;
+
+<SPAN STYLE="COLOR:#4400DD"><STRONG>AnnotationPairs</STRONG></SPAN>
+  : <SPAN STYLE="COLOR:#88AA66"><EM>/* empty */</EM></SPAN>
+  | <SPAN STYLE="COLOR:#4400DD"><STRONG>AnnotationPairs</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>AnnotationPair</STRONG></SPAN>
+  ;
+
+<SPAN STYLE="COLOR:#4400DD"><STRONG>AnnotationPair</STRONG></SPAN>
+  : <SPAN STYLE="COLOR:#4400DD"><STRONG>NSPrefixPair</STRONG></SPAN>
+  | <SPAN STYLE="COLOR:#4400DD"><STRONG>LocalNamePair</STRONG></SPAN>
+  | <SPAN STYLE="COLOR:#4400DD"><STRONG>AttributesPair</STRONG></SPAN>
+  | <SPAN STYLE="COLOR:#4400DD"><STRONG>ChildrenPair</STRONG></SPAN>
+  ;
+
+<SPAN STYLE="COLOR:#4400DD"><STRONG>NSPrefixPair</STRONG></SPAN>
+  : <SPAN STYLE="COLOR:#4400DD"><STRONG>NSPrefixKey</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>NSPrefixValue</STRONG></SPAN>
+  ;
+
+<SPAN STYLE="COLOR:#4400DD"><STRONG>NSPrefixKey</STRONG></SPAN>
+  : <SPAN STYLE="COLOR:GREEN">NSPREFIX</SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>KeyValSep_opt</STRONG></SPAN>
+  ;
+
+<SPAN STYLE="COLOR:#4400DD"><STRONG>NSPrefixValue</STRONG></SPAN>
+  : <SPAN STYLE="COLOR:GREEN">SYMBOL</SPAN>
+  <SPAN STYLE="COLOR:#444444">{</SPAN> nsPrefix = $1.svalue<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>; <SPAN STYLE="COLOR:#444444">}</SPAN>
+  ;
+
+<SPAN STYLE="COLOR:#4400DD"><STRONG>LocalNamePair</STRONG></SPAN>
+  : <SPAN STYLE="COLOR:#4400DD"><STRONG>LocalNameKey</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>LocalNameValue</STRONG></SPAN>
+  ;
+
+<SPAN STYLE="COLOR:#4400DD"><STRONG>LocalNameKey</STRONG></SPAN>
+  : <SPAN STYLE="COLOR:GREEN">LOCALNAME</SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>KeyValSep_opt</STRONG></SPAN>
+  ;
+
+<SPAN STYLE="COLOR:#4400DD"><STRONG>LocalNameValue</STRONG></SPAN>
+  : <SPAN STYLE="COLOR:GREEN">SYMBOL</SPAN>
+  <SPAN STYLE="COLOR:#444444">{</SPAN> localName = $1.svalue<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>; <SPAN STYLE="COLOR:#444444">}</SPAN>
+  ;
+
+<SPAN STYLE="COLOR:#4400DD"><STRONG>AttributesPair</STRONG></SPAN>
+  : <SPAN STYLE="COLOR:#4400DD"><STRONG>AttributesKey</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>AttributesValue</STRONG></SPAN>
+  ;
+
+<SPAN STYLE="COLOR:#4400DD"><STRONG>AttributesKey</STRONG></SPAN>
+  : <SPAN STYLE="COLOR:GREEN">ATTRIBUTES</SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>KeyValSep_opt</STRONG></SPAN>
+  ;
+
+<SPAN STYLE="COLOR:#4400DD"><STRONG>AttributesValue</STRONG></SPAN>
+  : <SPAN STYLE="COLOR:#D2691E"><EM>'{'</EM></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>Attributes</STRONG></SPAN> <SPAN STYLE="COLOR:#D2691E"><EM>'}'</EM></SPAN>
+  ;
+
+<SPAN STYLE="COLOR:#4400DD"><STRONG>Attributes</STRONG></SPAN>
+  : <SPAN STYLE="COLOR:#4400DD"><STRONG>Attribute</STRONG></SPAN>
+  | <SPAN STYLE="COLOR:#4400DD"><STRONG>Attributes</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>ListSep_opt</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>Attribute</STRONG></SPAN>
+  ;
+
+<SPAN STYLE="COLOR:#4400DD"><STRONG>Attribute</STRONG></SPAN>
+  : <SPAN STYLE="COLOR:GREEN">SYMBOL</SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>KeyValSep_opt</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>AttributeValue</STRONG></SPAN>
+  <SPAN STYLE="COLOR:#444444">{</SPAN>
+    <SPAN STYLE="COLOR:#4400DD"><STRONG>XmlAttributeInfo</STRONG></SPAN> info = <SPAN STYLE="COLOR:GREEN">null</SPAN>;
+    <SPAN STYLE="COLOR:#4400DD"><STRONG>String</STRONG></SPAN> key = $1.svalue<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>;
+    
+    <SPAN STYLE="COLOR:BROWN"><STRONG>if</STRONG></SPAN> <SPAN STYLE="COLOR:#444444">(</SPAN>$3.hasLiteralValueContent<SPAN STYLE="COLOR:#444444">)</SPAN>
+      info = <SPAN STYLE="COLOR:#4400DD"><STRONG>XmlAttributeInfo</STRONG></SPAN>.literalXmlAttributeInfo<SPAN STYLE="COLOR:#444444">(</SPAN>key,$3.value<SPAN STYLE="COLOR:#444444">)</SPAN>;
+    <SPAN STYLE="COLOR:BROWN"><STRONG>else</STRONG></SPAN>
+      <SPAN STYLE="COLOR:BROWN"><STRONG>if</STRONG></SPAN> <SPAN STYLE="COLOR:#444444">(</SPAN>$3.hasTerminalValueContent<SPAN STYLE="COLOR:#444444">)</SPAN>
+	info = <SPAN STYLE="COLOR:BROWN"><STRONG>new</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>XmlAttributeInfo</STRONG></SPAN><SPAN STYLE="COLOR:#444444">(</SPAN>key<SPAN STYLE="COLOR:#444444">)</SPAN>;
+      <SPAN STYLE="COLOR:BROWN"><STRONG>else</STRONG></SPAN>
+	<SPAN STYLE="COLOR:BROWN"><STRONG>if</STRONG></SPAN> <SPAN STYLE="COLOR:#444444">(</SPAN>$3.textInfo != <SPAN STYLE="COLOR:GREEN">null</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>
+	  info = <SPAN STYLE="COLOR:BROWN"><STRONG>new</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>XmlAttributeInfo</STRONG></SPAN><SPAN STYLE="COLOR:#444444">(</SPAN>key,
+				      <SPAN STYLE="COLOR:BROWN"><STRONG>new</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>XmlSpecialForm</STRONG></SPAN><SPAN STYLE="COLOR:#444444">(</SPAN>$3.textInfo<SPAN STYLE="COLOR:#444444">)</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>;
+	<SPAN STYLE="COLOR:BROWN"><STRONG>else</STRONG></SPAN>
+	  info = <SPAN STYLE="COLOR:BROWN"><STRONG>new</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>XmlAttributeInfo</STRONG></SPAN><SPAN STYLE="COLOR:#444444">(</SPAN>key,
+				      $3.cstChildPosition,
+				      $3.xmlPath,
+				      $3.attributeName<SPAN STYLE="COLOR:#444444">)</SPAN>;
+    
+    attributes.add<SPAN STYLE="COLOR:#444444">(</SPAN>info<SPAN STYLE="COLOR:#444444">)</SPAN>;
+  <SPAN STYLE="COLOR:#444444">}</SPAN>
+  ;
+
+ 
+</PRE>
+<HR>
+<CENTER>
+<TABLE BGCOLOR="WHITE" WIDTH=90% BORDER=1 CELLPADDING=10>
+<TR><TD><SPAN STYLE="COLOR:BLACK">
+
+   An <tt>$AttributeValue$</tt> may be one of:
+  
+   <ol>
+   <p><li>a <i>special form</i>;
+  
+   <p><li>a literal (unquoted, single-quoted, or double-quoted)
+          string;
+  
+   <p><li>a deep reference into the XML tree of the CST child at
+          a given position.
+  
+   </ol>
+  
+  
+</SPAN></TD></TR>
+</TABLE>
+</CENTER>
+<P>
+<PRE>
+
+<SPAN STYLE="COLOR:#4400DD"><STRONG>AttributeValue</STRONG></SPAN>
+  : 
+</PRE>
+<HR>
+<CENTER>
+<TABLE BGCOLOR="WHITE" WIDTH=90% BORDER=1 CELLPADDING=10>
+<TR><TD><SPAN STYLE="COLOR:BLACK">
+
+      An attribute value may the <i>special form</i> <tt>'&#36;VALUE'</tt>
+      or <tt>'&#36;TEXT'</tt>
+     
+</SPAN></TD></TR>
+</TABLE>
+</CENTER>
+<P>
+<PRE>
+
+    <SPAN STYLE="COLOR:#4400DD"><STRONG>SpecialForm</STRONG></SPAN>
+  <SPAN STYLE="COLOR:#444444">{</SPAN>
+    $$.hasTerminalValueContent = $1.hasTerminalValueContent;
+    $$.textInfo = $1.textInfo;
+  <SPAN STYLE="COLOR:#444444">}</SPAN>
+  | 
+</PRE>
+<HR>
+<CENTER>
+<TABLE BGCOLOR="WHITE" WIDTH=90% BORDER=1 CELLPADDING=10>
+<TR><TD><SPAN STYLE="COLOR:BLACK">
+
+      An attribute value may be a literal (unquoted, single-quoted, or
+      double-quoted) string.
+     
+</SPAN></TD></TR>
+</TABLE>
+</CENTER>
+<P>
+<PRE>
+
+    <SPAN STYLE="COLOR:GREEN">SYMBOL</SPAN>
+  <SPAN STYLE="COLOR:#444444">{</SPAN>
+    $$.value = $1.svalue<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>;
+    $$.hasLiteralValueContent = <SPAN STYLE="COLOR:GREEN">true</SPAN>;
+  <SPAN STYLE="COLOR:#444444">}</SPAN>
+  | 
+</PRE>
+<HR>
+<CENTER>
+<TABLE BGCOLOR="WHITE" WIDTH=90% BORDER=1 CELLPADDING=10>
+<TR><TD><SPAN STYLE="COLOR:BLACK">
+
+      An attribute value may be a deep reference into the XML tree of
+      the CST child at <tt>$POSITION$</tt>, optionally followed by an
+      <tt>$XmlPath$</tt>. Then comes an optional <tt>$AttributeName$</tt>
+      consisting of a slash <tt>'/'</tt> followed by an unquoted,
+      single-quoted, or double-quoted string denoting an attribute name
+      in the referenced XML subtree.
+     
+</SPAN></TD></TR>
+</TABLE>
+</CENTER>
+<P>
+<PRE>
+
+    <SPAN STYLE="COLOR:GREEN">POSITION</SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>XmlPath_opt</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>AttributeName_opt</STRONG></SPAN>
+  <SPAN STYLE="COLOR:#444444">{</SPAN>
+    $$.cstChildPosition = <SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:BLUE"><STRONG>int</STRONG></SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>$1.nvalue<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>;
+    $$.xmlPath = $2.xmlPath;
+    $$.attributeName = $3.attributeName;
+  <SPAN STYLE="COLOR:#444444">}</SPAN>
+  ;
+
+
+</PRE>
+<HR>
+<CENTER>
+<TABLE BGCOLOR="WHITE" WIDTH=90% BORDER=1 CELLPADDING=10>
+<TR><TD><SPAN STYLE="COLOR:BLACK">
+
+  A <tt>$SpecialForm$</tt> is introduced with a dollar sign
+  (<tt>'&#36;'</tt>) followed by specially interpreted contents; at
+  present the available special forms are:
+ 
+  <ul>
+  <p><li> the identifier <tt>value</tt>, in which case the CST
+          node it refers to must be a terminal;
+  <p><li> the identifier <tt>text</tt>; followed with a sequence
+          of arguments, each being wither a $SYMBOL$ (<i>i.e.</i>, a
+          string literal (possibly single or double-quoted), or an
+          expression of the form <tt>n/attr</tt>, this being a
+          reference to the contents of attribute <i>attr</i> of the XML
+          element for RHS position <i>n</i>.
+  </ul>
+ 
+</SPAN></TD></TR>
+</TABLE>
+</CENTER>
+<P>
+<PRE>
+
+<SPAN STYLE="COLOR:#4400DD"><STRONG>SpecialForm</STRONG></SPAN>
+  : <SPAN STYLE="COLOR:GREEN">VALUE</SPAN>
+  <SPAN STYLE="COLOR:#444444">{</SPAN>
+    $$.hasTerminalValueContent = <SPAN STYLE="COLOR:GREEN">true</SPAN>;
+  <SPAN STYLE="COLOR:#444444">}</SPAN>
+  | <SPAN STYLE="COLOR:GREEN">TEXT</SPAN> <SPAN STYLE="COLOR:#D2691E"><EM>'('</EM></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>TextArguments</STRONG></SPAN> <SPAN STYLE="COLOR:#D2691E"><EM>')'</EM></SPAN>
+  <SPAN STYLE="COLOR:#444444">{</SPAN>
+    $$.textInfo = $3.textInfo;
+  <SPAN STYLE="COLOR:#444444">}</SPAN>
+  ;
+
+<SPAN STYLE="COLOR:#4400DD"><STRONG>TextArguments</STRONG></SPAN>
+  : <SPAN STYLE="COLOR:#4400DD"><STRONG>TextArgument</STRONG></SPAN>
+  <SPAN STYLE="COLOR:#444444">{</SPAN>
+    <SPAN STYLE="COLOR:#444444">(</SPAN>$$.textInfo = <SPAN STYLE="COLOR:BROWN"><STRONG>new</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>ArrayList</STRONG></SPAN><SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>.add<SPAN STYLE="COLOR:#444444">(</SPAN>$1.info<SPAN STYLE="COLOR:#444444">)</SPAN>;
+  <SPAN STYLE="COLOR:#444444">}</SPAN>
+  | <SPAN STYLE="COLOR:#4400DD"><STRONG>TextArguments</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>ListSep_opt</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>TextArgument</STRONG></SPAN>
+  <SPAN STYLE="COLOR:#444444">{</SPAN>
+    <SPAN STYLE="COLOR:#444444">(</SPAN>$$.textInfo = $1.textInfo<SPAN STYLE="COLOR:#444444">)</SPAN>.add<SPAN STYLE="COLOR:#444444">(</SPAN>$3.info<SPAN STYLE="COLOR:#444444">)</SPAN>;
+  <SPAN STYLE="COLOR:#444444">}</SPAN>
+  ;
+
+<SPAN STYLE="COLOR:#4400DD"><STRONG>TextArgument</STRONG></SPAN>
+  : <SPAN STYLE="COLOR:GREEN">SYMBOL</SPAN>
+  <SPAN STYLE="COLOR:#444444">{</SPAN>
+    <SPAN STYLE="COLOR:#444444">(</SPAN>$$.info = <SPAN STYLE="COLOR:BROWN"><STRONG>new</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>XmlTextInfoArg</STRONG></SPAN><SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>.setText<SPAN STYLE="COLOR:#444444">(</SPAN>$1.svalue<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>;
+  <SPAN STYLE="COLOR:#444444">}</SPAN>
+  | <SPAN STYLE="COLOR:#4400DD"><STRONG>TextRef</STRONG></SPAN>
+  <SPAN STYLE="COLOR:#444444">{</SPAN>
+    $$.info = $1.info;
+  <SPAN STYLE="COLOR:#444444">}</SPAN>
+  ;
+
+
+</PRE>
+<HR>
+<CENTER>
+<TABLE BGCOLOR="WHITE" WIDTH=90% BORDER=1 CELLPADDING=10>
+<TR><TD><SPAN STYLE="COLOR:BLACK">
+
+  A <tt>TextRef</tt> denotes a reference to some text located
+  in the XML tree that has been built for a child CST.
+ 
+</SPAN></TD></TR>
+</TABLE>
+</CENTER>
+<P>
+<PRE>
+
+<SPAN STYLE="COLOR:#4400DD"><STRONG>TextRef</STRONG></SPAN>
+  : <SPAN STYLE="COLOR:#4400DD"><STRONG>ChildXmlTree</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>AttributeName_opt</STRONG></SPAN>
+  <SPAN STYLE="COLOR:#444444">{</SPAN>
+    $$.info = <SPAN STYLE="COLOR:BROWN"><STRONG>new</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>XmlTextInfoArg</STRONG></SPAN><SPAN STYLE="COLOR:#444444">(</SPAN>$1.cstChildPosition,
+				 $1.xmlPath,
+				 $2.attributeName<SPAN STYLE="COLOR:#444444">)</SPAN>;
+  <SPAN STYLE="COLOR:#444444">}</SPAN>
+  ;
+
+<SPAN STYLE="COLOR:#4400DD"><STRONG>AttributeName</STRONG></SPAN>
+  : <SPAN STYLE="COLOR:GREEN">SLASH</SPAN> <SPAN STYLE="COLOR:GREEN">SYMBOL</SPAN>
+  <SPAN STYLE="COLOR:#444444">{</SPAN>
+    $$.attributeName = $2.svalue<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>;
+  <SPAN STYLE="COLOR:#444444">}</SPAN>
+  ;
+
+
+</PRE>
+<HR>
+<CENTER>
+<TABLE BGCOLOR="WHITE" WIDTH=90% BORDER=1 CELLPADDING=10>
+<TR><TD><SPAN STYLE="COLOR:BLACK">
+
+  An <tt>XmlChildSpec</tt> specifies the structure of an XML tree for a
+  child CST.  When <tt>$WrapperPath_opt$</tt> is not empty, it is a
+  sequence of <tt>$SYMBOL$</tt>'s each followed by either a dot or an
+  asterisk. This specifies a path of XML tags: one for each XML layer
+  to wrap around the resulting XML contents.  A dot triggers a single
+  element wrap, while an asterisk triggers the wrap to distribute on
+  the next nesting level's elements, if any.
+ 
+</SPAN></TD></TR>
+</TABLE>
+</CENTER>
+<P>
+<PRE>
+
+<SPAN STYLE="COLOR:#4400DD"><STRONG>XmlChildSpec</STRONG></SPAN>
+  : <SPAN STYLE="COLOR:#4400DD"><STRONG>WrapperPath_opt</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>ChildXmlTree</STRONG></SPAN>
+  <SPAN STYLE="COLOR:#444444">{</SPAN>
+    $$.wrapperPath = $1.wrapperPath;    
+    $$.cstChildPosition = $2.cstChildPosition;
+    $$.xmlPath = $2.xmlPath;
+    $$.hasTerminalValueContent = $2.hasTerminalValueContent;
+    $$.textInfo = $2.textInfo;
+  <SPAN STYLE="COLOR:#444444">}</SPAN>
+  ;
+  
+
+</PRE>
+<HR>
+<CENTER>
+<TABLE BGCOLOR="WHITE" WIDTH=90% BORDER=1 CELLPADDING=10>
+<TR><TD><SPAN STYLE="COLOR:BLACK">
+
+  A child XML tree denotes the contents on the XML tree being built
+  for a child CST node.
+ 
+</SPAN></TD></TR>
+</TABLE>
+</CENTER>
+<P>
+<PRE>
+
+<SPAN STYLE="COLOR:#4400DD"><STRONG>ChildXmlTree</STRONG></SPAN>
+  : 
+</PRE>
+<HR>
+<CENTER>
+<TABLE BGCOLOR="WHITE" WIDTH=90% BORDER=1 CELLPADDING=10>
+<TR><TD><SPAN STYLE="COLOR:BLACK">
+
+      A child XML tree may be a <i>special form</i> starting with a
+      <tt>'&#36;'</tt>.
+     
+</SPAN></TD></TR>
+</TABLE>
+</CENTER>
+<P>
+<PRE>
+
+    <SPAN STYLE="COLOR:#4400DD"><STRONG>SpecialForm</STRONG></SPAN>
+  <SPAN STYLE="COLOR:#444444">{</SPAN>
+    $$.hasTerminalValueContent = $1.hasTerminalValueContent;
+    $$.textInfo = $1.textInfo;
+  <SPAN STYLE="COLOR:#444444">}</SPAN>
+  | 
+</PRE>
+<HR>
+<CENTER>
+<TABLE BGCOLOR="WHITE" WIDTH=90% BORDER=1 CELLPADDING=10>
+<TR><TD><SPAN STYLE="COLOR:BLACK">
+
+      <tt>$POSITION$</tt> is an <tt>int</tt> (say, <i><tt>n</tt></i>)
+      and refers to the <i><tt>n</tt></i><sup>th</sup> child CST node.
+     
+      <p>
+     
+      When <tt>$XmlPath_opt$</tt> is empty, an <tt>ChildXmlTree</tt>
+      refers to the XML element of the <i><tt>n</tt></i><sup>th</sup>
+      child CST node.
+     
+      <p>
+     
+      When <tt>$XmlPath_opt$</tt> is not empty, it is a bracketed,
+      dot-separated sequence of <tt>$POSITION$</tt>'s (see
+      <tt>$XmlPath$</tt>). This sequence denotes a tree-address path in
+      the tree of XML elements, starting from the XML element associated
+      with the CST node at position <i><tt>n</tt></i>.
+     
+</SPAN></TD></TR>
+</TABLE>
+</CENTER>
+<P>
+<PRE>
+
+    <SPAN STYLE="COLOR:GREEN">POSITION</SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>XmlPath_opt</STRONG></SPAN>
+  <SPAN STYLE="COLOR:#444444">{</SPAN>
+    $$.cstChildPosition = <SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:BLUE"><STRONG>int</STRONG></SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>$1.nvalue<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>;
+    $$.xmlPath = $2.xmlPath;
+  <SPAN STYLE="COLOR:#444444">}</SPAN>
+  ;
+
+<SPAN STYLE="COLOR:#4400DD"><STRONG>WrapperPath_opt</STRONG></SPAN>
+  : <SPAN STYLE="COLOR:#88AA66"><EM>/* empty */</EM></SPAN>
+  | <SPAN STYLE="COLOR:#4400DD"><STRONG>WrapperPath</STRONG></SPAN>
+  <SPAN STYLE="COLOR:#444444">{</SPAN>
+    $$.wrapperPath = $1.wrapperPath;
+  <SPAN STYLE="COLOR:#444444">}</SPAN>
+  ;
+
+  
+</PRE>
+<HR>
+<CENTER>
+<TABLE BGCOLOR="WHITE" WIDTH=90% BORDER=1 CELLPADDING=10>
+<TR><TD><SPAN STYLE="COLOR:BLACK">
+
+    A <tt>$WrapperPath$</tt> is a sequence of pairs each made of
+    <tt>$SYMBOL$</tt>'s followed by either a dot or an asterisk. This
+    specifies a path of XML tags: one for each XML layer to wrap around
+    the resulting XML contents.  A dot triggers a single element wrap,
+    while an asterisk triggers the wrap to distribute on the next
+    nesting level's elements.
+   
+</SPAN></TD></TR>
+</TABLE>
+</CENTER>
+<P>
+<PRE>
+
+<SPAN STYLE="COLOR:#4400DD"><STRONG>WrapperPath</STRONG></SPAN>
+  : <SPAN STYLE="COLOR:GREEN">SYMBOL</SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>DotOrStar</STRONG></SPAN>
+  <SPAN STYLE="COLOR:#444444">{</SPAN> $$.add<SPAN STYLE="COLOR:#444444">(</SPAN>$1.svalue<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>,$2.isStarred<SPAN STYLE="COLOR:#444444">)</SPAN>; <SPAN STYLE="COLOR:#444444">}</SPAN>
+  | <SPAN STYLE="COLOR:#4400DD"><STRONG>WrapperPath</STRONG></SPAN> <SPAN STYLE="COLOR:GREEN">SYMBOL</SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>DotOrStar</STRONG></SPAN>
+  <SPAN STYLE="COLOR:#444444">{</SPAN> $$.addTo<SPAN STYLE="COLOR:#444444">(</SPAN>$1.wrapperPath,$2.svalue<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>,$3.isStarred<SPAN STYLE="COLOR:#444444">)</SPAN>; <SPAN STYLE="COLOR:#444444">}</SPAN>
+  ;
+
+<SPAN STYLE="COLOR:#4400DD"><STRONG>DotOrStar</STRONG></SPAN>
+  : <SPAN STYLE="COLOR:GREEN">DOT</SPAN>
+  | <SPAN STYLE="COLOR:GREEN">STAR</SPAN>
+  <SPAN STYLE="COLOR:#444444">{</SPAN> $$.isStarred = <SPAN STYLE="COLOR:GREEN">true</SPAN>; <SPAN STYLE="COLOR:#444444">}</SPAN>
+  ;
+
+
+</PRE>
+<HR>
+<CENTER>
+<TABLE BGCOLOR="WHITE" WIDTH=90% BORDER=1 CELLPADDING=10>
+<TR><TD><SPAN STYLE="COLOR:BLACK">
+
+  A <tt>$XmlPath_opt$</tt> is a possibly empty bracketed
+  <tt>$XmlPath$</tt>.
+ 
+</SPAN></TD></TR>
+</TABLE>
+</CENTER>
+<P>
+<PRE>
+
+<SPAN STYLE="COLOR:#4400DD"><STRONG>XmlPath_opt</STRONG></SPAN>
+  : <SPAN STYLE="COLOR:#88AA66"><EM>/* empty */</EM></SPAN>
+  | <SPAN STYLE="COLOR:#D2691E"><EM>'['</EM></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>XmlPath</STRONG></SPAN> <SPAN STYLE="COLOR:#D2691E"><EM>']'</EM></SPAN>
+  <SPAN STYLE="COLOR:#444444">{</SPAN> $$.xmlPath = $2.xmlPath; <SPAN STYLE="COLOR:#444444">}</SPAN>
+  ;
+
+
+</PRE>
+<HR>
+<CENTER>
+<TABLE BGCOLOR="WHITE" WIDTH=90% BORDER=1 CELLPADDING=10>
+<TR><TD><SPAN STYLE="COLOR:BLACK">
+
+  An <tt>XmlPath</tt> is either a single positive integer, or a
+  dot-separated sequence thereof.
+ 
+</SPAN></TD></TR>
+</TABLE>
+</CENTER>
+<P>
+<PRE>
+
+<SPAN STYLE="COLOR:#4400DD"><STRONG>XmlPath</STRONG></SPAN>
+  : <SPAN STYLE="COLOR:GREEN">POSITION</SPAN>
+  <SPAN STYLE="COLOR:#444444">{</SPAN> $$.add<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:BLUE"><STRONG>int</STRONG></SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>$1.nvalue<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>; <SPAN STYLE="COLOR:#444444">}</SPAN>
+  | <SPAN STYLE="COLOR:#4400DD"><STRONG>XmlPath</STRONG></SPAN> <SPAN STYLE="COLOR:GREEN">DOT</SPAN> <SPAN STYLE="COLOR:GREEN">POSITION</SPAN>
+  <SPAN STYLE="COLOR:#444444">{</SPAN> $$.addTo<SPAN STYLE="COLOR:#444444">(</SPAN>$1.xmlPath,<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:BLUE"><STRONG>int</STRONG></SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>$3.nvalue<SPAN STYLE="COLOR:#444444">(</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN><SPAN STYLE="COLOR:#444444">)</SPAN>; <SPAN STYLE="COLOR:#444444">}</SPAN>
+  ;
+
+<SPAN STYLE="COLOR:#4400DD"><STRONG>ChildrenPair</STRONG></SPAN>
+  : <SPAN STYLE="COLOR:#4400DD"><STRONG>ChildrenKey</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>ChildrenValue</STRONG></SPAN>
+  ;
+
+<SPAN STYLE="COLOR:#4400DD"><STRONG>ChildrenKey</STRONG></SPAN>
+  : <SPAN STYLE="COLOR:GREEN">CHILDREN</SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>KeyValSep_opt</STRONG></SPAN>
+  ;
+
+
+</PRE>
+<HR>
+<CENTER>
+<TABLE BGCOLOR="WHITE" WIDTH=90% BORDER=1 CELLPADDING=10>
+<TR><TD><SPAN STYLE="COLOR:BLACK">
+
+  A <tt>ChildrenValue</tt> is a parenthesized <tt>$XmlTreeRefs$</tt>.
+ 
+</SPAN></TD></TR>
+</TABLE>
+</CENTER>
+<P>
+<PRE>
+
+<SPAN STYLE="COLOR:#4400DD"><STRONG>ChildrenValue</STRONG></SPAN>
+  : <SPAN STYLE="COLOR:#D2691E"><EM>'('</EM></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>XmlTreeRefs</STRONG></SPAN> <SPAN STYLE="COLOR:#D2691E"><EM>')'</EM></SPAN>
+  ;
+
+
+</PRE>
+<HR>
+<CENTER>
+<TABLE BGCOLOR="WHITE" WIDTH=90% BORDER=1 CELLPADDING=10>
+<TR><TD><SPAN STYLE="COLOR:BLACK">
+
+  An <tt>XmlTreeRefs</tt> is either a single
+  <tt>$XmlTreeRef$</tt>, or a sequence thereof.
+ 
+</SPAN></TD></TR>
+</TABLE>
+</CENTER>
+<P>
+<PRE>
+
+<SPAN STYLE="COLOR:#4400DD"><STRONG>XmlTreeRefs</STRONG></SPAN>
+  : <SPAN STYLE="COLOR:#4400DD"><STRONG>XmlTreeRef</STRONG></SPAN>
+  <SPAN STYLE="COLOR:#444444">{</SPAN>
+    children.add<SPAN STYLE="COLOR:#444444">(</SPAN>$1.cstChildPosition<SPAN STYLE="COLOR:#444444">)</SPAN>;
+    xmlPaths.add<SPAN STYLE="COLOR:#444444">(</SPAN>$1.xmlPath<SPAN STYLE="COLOR:#444444">)</SPAN>;
+    wrapperPaths.add<SPAN STYLE="COLOR:#444444">(</SPAN>$1.wrapperPath<SPAN STYLE="COLOR:#444444">)</SPAN>;
+    attributeNames.add<SPAN STYLE="COLOR:#444444">(</SPAN>$1.attributeName<SPAN STYLE="COLOR:#444444">)</SPAN>;
+    terminalValueFlag = $1.hasTerminalValueContent;
+    textInfos.add<SPAN STYLE="COLOR:#444444">(</SPAN>$1.textInfo<SPAN STYLE="COLOR:#444444">)</SPAN>;
+  <SPAN STYLE="COLOR:#444444">}</SPAN>
+  | <SPAN STYLE="COLOR:#4400DD"><STRONG>XmlTreeRefs</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>ListSep_opt</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>XmlTreeRef</STRONG></SPAN>
+  <SPAN STYLE="COLOR:#444444">{</SPAN>
+    children.add<SPAN STYLE="COLOR:#444444">(</SPAN>$3.cstChildPosition<SPAN STYLE="COLOR:#444444">)</SPAN>;
+    xmlPaths.add<SPAN STYLE="COLOR:#444444">(</SPAN>$3.xmlPath<SPAN STYLE="COLOR:#444444">)</SPAN>;
+    wrapperPaths.add<SPAN STYLE="COLOR:#444444">(</SPAN>$3.wrapperPath<SPAN STYLE="COLOR:#444444">)</SPAN>;
+    attributeNames.add<SPAN STYLE="COLOR:#444444">(</SPAN>$3.attributeName<SPAN STYLE="COLOR:#444444">)</SPAN>;
+    terminalValueFlag = $3.hasTerminalValueContent;
+    textInfos.add<SPAN STYLE="COLOR:#444444">(</SPAN>$3.textInfo<SPAN STYLE="COLOR:#444444">)</SPAN>;  <SPAN STYLE="COLOR:#444444">}</SPAN>
+  ;
+
+<SPAN STYLE="COLOR:#4400DD"><STRONG>XmlTreeRef</STRONG></SPAN>
+  : <SPAN STYLE="COLOR:#4400DD"><STRONG>XmlChildSpec</STRONG></SPAN> <SPAN STYLE="COLOR:#4400DD"><STRONG>AttributeName_opt</STRONG></SPAN>
+  <SPAN STYLE="COLOR:#444444">{</SPAN>
+    $$.cstChildPosition = $1.cstChildPosition;
+    $$.xmlPath = $1.xmlPath;
+    $$.wrapperPath = $1.wrapperPath;
+    $$.attributeName = $2.attributeName;
+    $$.hasTerminalValueContent = $1.hasTerminalValueContent;
+    $$.textInfo = $1.textInfo;
+  <SPAN STYLE="COLOR:#444444">}</SPAN>
+  ;
+
+<SPAN STYLE="COLOR:#4400DD"><STRONG>AttributeName_opt</STRONG></SPAN>
+  : <SPAN STYLE="COLOR:#88AA66"><EM>/* empty */</EM></SPAN>
+  | <SPAN STYLE="COLOR:#4400DD"><STRONG>AttributeName</STRONG></SPAN>
+  <SPAN STYLE="COLOR:#444444">{</SPAN>
+    $$.attributeName = $1.attributeName;
+  <SPAN STYLE="COLOR:#444444">}</SPAN>
+  ;
+
+<SPAN STYLE="COLOR:#4400DD"><STRONG>KeyValSep_opt</STRONG></SPAN>
+  : <SPAN STYLE="COLOR:#88AA66"><EM>/* empty */</EM></SPAN>
+  | <SPAN STYLE="COLOR:GREEN">KEYVALSEP</SPAN>
+  ;
+
+<SPAN STYLE="COLOR:#4400DD"><STRONG>ListSep_opt</STRONG></SPAN>
+  : <SPAN STYLE="COLOR:#88AA66"><EM>/* empty */</EM></SPAN>
+  | <SPAN STYLE="COLOR:GREEN">LISTSEP</SPAN>
+  ;
+
+%%
+  
+
+</PRE>
+<P>
+<HR>
+<P ALIGN="RIGHT"><SPAN STYLE="COLOR:#F07070"><EM>
+This file was generated on Tue Apr 30 07:44:49 CEST 2019 from file <SPAN STYLE="COLOR:BROWN"><KBD>XmlAnnotation.grm</KBD></SPAN><BR>by the <SPAN STYLE="COLOR:BROWN"><KBD>hlt.language.tools.Hilite</KBD></SPAN> Java tool written by <A HREF="http://hassan-ait-kaci.net">Hassan A&iuml;t-Kaci</A></EM></SPAN>
+<P>
+<HR>
+</BODY>
+</HTML>

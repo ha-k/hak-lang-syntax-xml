@@ -1,0 +1,191 @@
+<HTML>
+<HEAD>
+<LINK REL="STYLESHEET" TYPE="text/css" HREF="style.css">
+<SCRIPT LANGUAGE="JavaScript" SRC="script.jvs"></SCRIPT>
+<TITLE>
+Yacc Form of grammar XmlAnnotation.grm
+</TITLE>
+</HEAD>
+<BODY CLASS="MAIN">
+<H1 ALIGN="CENTER">Yacc Form of grammar <SPAN STYLE="COLOR:MAROON">XmlAnnotation.grm</SPAN></H1>
+<CENTER>
+<HR>
+<SPAN STYLE="COLOR:#F07070; FONT-SIZE:X-SMALL"><B>Copyright &copy; 2019 by <A HREF="http://www.hassan-ait-kaci.net/">Hassan A&iuml;t-Kaci</A>; All Rights Reserved.</B></SPAN>
+<P>
+<SPAN STYLE="COLOR:#F00770; FONT-SIZE:XX-SMALL"">
+This yacc grammar was generated on Tue Apr 30 07:44:51 CEST 2019 from the annotated Jacc grammar file <SPAN STYLE="COLOR:BROWN"><TT>XmlAnnotation.grm</TT></SPAN>.
+<HR><P>
+<TABLE BGCOLOR="WHITE" BORDER="5" CELLPADDING="20">
+<TR><TD>
+<PRE>
+<A CLASS="SYMBOL" NAME="XmlAnnotation"></A><A CLASS="SYMBOL" HREF="XmlAnnotation_NT_17.html" TARGET="MAIN" ONCLICK="opener.focus()"><B><TT><I>XmlAnnotation</I></TT></B></A>
+	: <A CLASS="SYMBOL" HREF="#AnnotationPairs">AnnotationPairs</A> 
+	;
+
+<A CLASS="SYMBOL" NAME="AnnotationPairs"></A><A CLASS="SYMBOL" HREF="XmlAnnotation_NT_18.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><I>AnnotationPairs</I></TT></A>
+	: <SPAN STYLE="COLOR:ORANGE">/* empty */</SPAN>
+	| <A CLASS="SYMBOL" HREF="#AnnotationPairs">AnnotationPairs</A> <A CLASS="SYMBOL" HREF="#AnnotationPair">AnnotationPair</A> 
+	;
+
+<A CLASS="SYMBOL" NAME="AnnotationPair"></A><A CLASS="SYMBOL" HREF="XmlAnnotation_NT_19.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><I>AnnotationPair</I></TT></A>
+	: <A CLASS="SYMBOL" HREF="#NSPrefixPair">NSPrefixPair</A> 
+	| <A CLASS="SYMBOL" HREF="#LocalNamePair">LocalNamePair</A> 
+	| <A CLASS="SYMBOL" HREF="#AttributesPair">AttributesPair</A> 
+	| <A CLASS="SYMBOL" HREF="#ChildrenPair">ChildrenPair</A> 
+	;
+
+<A CLASS="SYMBOL" NAME="NSPrefixPair"></A><A CLASS="SYMBOL" HREF="XmlAnnotation_NT_20.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><I>NSPrefixPair</I></TT></A>
+	: <A CLASS="SYMBOL" HREF="#NSPrefixKey">NSPrefixKey</A> <A CLASS="SYMBOL" HREF="#NSPrefixValue">NSPrefixValue</A> 
+	;
+
+<A CLASS="SYMBOL" NAME="NSPrefixKey"></A><A CLASS="SYMBOL" HREF="XmlAnnotation_NT_24.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><I>NSPrefixKey</I></TT></A>
+	: <A CLASS="SYMBOL" HREF="XmlAnnotation_TT_11.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><B>NSPREFIX</B></TT></A> <A CLASS="SYMBOL" HREF="#KeyValSep_opt">KeyValSep_opt</A> 
+	;
+
+<A CLASS="SYMBOL" NAME="NSPrefixValue"></A><A CLASS="SYMBOL" HREF="XmlAnnotation_NT_25.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><I>NSPrefixValue</I></TT></A>
+	: <A CLASS="SYMBOL" HREF="XmlAnnotation_TT_08.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><B>SYMBOL</B></TT></A> 
+	;
+
+<A CLASS="SYMBOL" NAME="LocalNamePair"></A><A CLASS="SYMBOL" HREF="XmlAnnotation_NT_21.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><I>LocalNamePair</I></TT></A>
+	: <A CLASS="SYMBOL" HREF="#LocalNameKey">LocalNameKey</A> <A CLASS="SYMBOL" HREF="#LocalNameValue">LocalNameValue</A> 
+	;
+
+<A CLASS="SYMBOL" NAME="LocalNameKey"></A><A CLASS="SYMBOL" HREF="XmlAnnotation_NT_27.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><I>LocalNameKey</I></TT></A>
+	: <A CLASS="SYMBOL" HREF="XmlAnnotation_TT_12.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><B>LOCALNAME</B></TT></A> <A CLASS="SYMBOL" HREF="#KeyValSep_opt">KeyValSep_opt</A> 
+	;
+
+<A CLASS="SYMBOL" NAME="LocalNameValue"></A><A CLASS="SYMBOL" HREF="XmlAnnotation_NT_28.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><I>LocalNameValue</I></TT></A>
+	: <A CLASS="SYMBOL" HREF="XmlAnnotation_TT_08.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><B>SYMBOL</B></TT></A> 
+	;
+
+<A CLASS="SYMBOL" NAME="AttributesPair"></A><A CLASS="SYMBOL" HREF="XmlAnnotation_NT_22.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><I>AttributesPair</I></TT></A>
+	: <A CLASS="SYMBOL" HREF="#AttributesKey">AttributesKey</A> <A CLASS="SYMBOL" HREF="#AttributesValue">AttributesValue</A> 
+	;
+
+<A CLASS="SYMBOL" NAME="AttributesKey"></A><A CLASS="SYMBOL" HREF="XmlAnnotation_NT_29.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><I>AttributesKey</I></TT></A>
+	: <A CLASS="SYMBOL" HREF="XmlAnnotation_TT_13.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><B>ATTRIBUTES</B></TT></A> <A CLASS="SYMBOL" HREF="#KeyValSep_opt">KeyValSep_opt</A> 
+	;
+
+<A CLASS="SYMBOL" NAME="AttributesValue"></A><A CLASS="SYMBOL" HREF="XmlAnnotation_NT_30.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><I>AttributesValue</I></TT></A>
+	: '<A CLASS="SYMBOL" HREF="XmlAnnotation_TT_17.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><B>{</B></TT></A>' <A CLASS="SYMBOL" HREF="#Attributes">Attributes</A> '<A CLASS="SYMBOL" HREF="XmlAnnotation_TT_18.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><B>}</B></TT></A>' 
+	;
+
+<A CLASS="SYMBOL" NAME="Attributes"></A><A CLASS="SYMBOL" HREF="XmlAnnotation_NT_31.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><I>Attributes</I></TT></A>
+	: <A CLASS="SYMBOL" HREF="#Attribute">Attribute</A> 
+	| <A CLASS="SYMBOL" HREF="#Attributes">Attributes</A> <A CLASS="SYMBOL" HREF="#ListSep_opt">ListSep_opt</A> <A CLASS="SYMBOL" HREF="#Attribute">Attribute</A> 
+	;
+
+<A CLASS="SYMBOL" NAME="Attribute"></A><A CLASS="SYMBOL" HREF="XmlAnnotation_NT_32.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><I>Attribute</I></TT></A>
+	: <A CLASS="SYMBOL" HREF="XmlAnnotation_TT_08.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><B>SYMBOL</B></TT></A> <A CLASS="SYMBOL" HREF="#KeyValSep_opt">KeyValSep_opt</A> <A CLASS="SYMBOL" HREF="#AttributeValue">AttributeValue</A> 
+	;
+
+<A CLASS="SYMBOL" NAME="AttributeValue"></A><A CLASS="SYMBOL" HREF="XmlAnnotation_NT_09.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><I>AttributeValue</I></TT></A>
+	<A CLASS="SYMBOL" HREF="javascript:showRuleDoc('XmlAnnotation_GR_22')">:</A> <A CLASS="SYMBOL" HREF="#SpecialForm">SpecialForm</A> 
+	<A CLASS="SYMBOL" HREF="javascript:showRuleDoc('XmlAnnotation_GR_23')">|</A> <A CLASS="SYMBOL" HREF="XmlAnnotation_TT_08.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><B>SYMBOL</B></TT></A> 
+	<A CLASS="SYMBOL" HREF="javascript:showRuleDoc('XmlAnnotation_GR_24')">|</A> <A CLASS="SYMBOL" HREF="XmlAnnotation_TT_07.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><B>POSITION</B></TT></A> <A CLASS="SYMBOL" HREF="#XmlPath_opt">XmlPath_opt</A> <A CLASS="SYMBOL" HREF="#AttributeName_opt">AttributeName_opt</A> 
+	;
+
+<A CLASS="SYMBOL" NAME="SpecialForm"></A><A CLASS="SYMBOL" HREF="XmlAnnotation_NT_16.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><I>SpecialForm</I></TT></A>
+	: <A CLASS="SYMBOL" HREF="XmlAnnotation_TT_10.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><B>VALUE</B></TT></A> 
+	| <A CLASS="SYMBOL" HREF="XmlAnnotation_TT_09.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><B>TEXT</B></TT></A> '<A CLASS="SYMBOL" HREF="XmlAnnotation_TT_19.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><B>(</B></TT></A>' <A CLASS="SYMBOL" HREF="#TextArguments">TextArguments</A> '<A CLASS="SYMBOL" HREF="XmlAnnotation_TT_20.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><B>)</B></TT></A>' 
+	;
+
+<A CLASS="SYMBOL" NAME="TextArguments"></A><A CLASS="SYMBOL" HREF="XmlAnnotation_NT_15.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><I>TextArguments</I></TT></A>
+	: <A CLASS="SYMBOL" HREF="#TextArgument">TextArgument</A> 
+	| <A CLASS="SYMBOL" HREF="#TextArguments">TextArguments</A> <A CLASS="SYMBOL" HREF="#ListSep_opt">ListSep_opt</A> <A CLASS="SYMBOL" HREF="#TextArgument">TextArgument</A> 
+	;
+
+<A CLASS="SYMBOL" NAME="TextArgument"></A><A CLASS="SYMBOL" HREF="XmlAnnotation_NT_13.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><I>TextArgument</I></TT></A>
+	: <A CLASS="SYMBOL" HREF="XmlAnnotation_TT_08.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><B>SYMBOL</B></TT></A> 
+	| <A CLASS="SYMBOL" HREF="#TextRef">TextRef</A> 
+	;
+
+<A CLASS="SYMBOL" NAME="TextRef"></A><A CLASS="SYMBOL" HREF="XmlAnnotation_NT_14.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><I>TextRef</I></TT></A>
+	: <A CLASS="SYMBOL" HREF="#ChildXmlTree">ChildXmlTree</A> <A CLASS="SYMBOL" HREF="#AttributeName_opt">AttributeName_opt</A> 
+	;
+
+<A CLASS="SYMBOL" NAME="AttributeName"></A><A CLASS="SYMBOL" HREF="XmlAnnotation_NT_08.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><I>AttributeName</I></TT></A>
+	: <A CLASS="SYMBOL" HREF="XmlAnnotation_TT_06.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><B>SLASH</B></TT></A> <A CLASS="SYMBOL" HREF="XmlAnnotation_TT_08.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><B>SYMBOL</B></TT></A> 
+	;
+
+<A CLASS="SYMBOL" NAME="XmlChildSpec"></A><A CLASS="SYMBOL" HREF="XmlAnnotation_NT_05.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><I>XmlChildSpec</I></TT></A>
+	: <A CLASS="SYMBOL" HREF="#WrapperPath_opt">WrapperPath_opt</A> <A CLASS="SYMBOL" HREF="#ChildXmlTree">ChildXmlTree</A> 
+	;
+
+<A CLASS="SYMBOL" NAME="ChildXmlTree"></A><A CLASS="SYMBOL" HREF="XmlAnnotation_NT_04.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><I>ChildXmlTree</I></TT></A>
+	<A CLASS="SYMBOL" HREF="javascript:showRuleDoc('XmlAnnotation_GR_34')">:</A> <A CLASS="SYMBOL" HREF="#SpecialForm">SpecialForm</A> 
+	<A CLASS="SYMBOL" HREF="javascript:showRuleDoc('XmlAnnotation_GR_35')">|</A> <A CLASS="SYMBOL" HREF="XmlAnnotation_TT_07.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><B>POSITION</B></TT></A> <A CLASS="SYMBOL" HREF="#XmlPath_opt">XmlPath_opt</A> 
+	;
+
+<A CLASS="SYMBOL" NAME="WrapperPath_opt"></A><A CLASS="SYMBOL" HREF="XmlAnnotation_NT_02.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><I>WrapperPath_opt</I></TT></A>
+	: <SPAN STYLE="COLOR:ORANGE">/* empty */</SPAN>
+	| <A CLASS="SYMBOL" HREF="#WrapperPath">WrapperPath</A> 
+	;
+
+<A CLASS="SYMBOL" NAME="WrapperPath"></A><A CLASS="SYMBOL" HREF="XmlAnnotation_NT_03.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><I>WrapperPath</I></TT></A>
+	: <A CLASS="SYMBOL" HREF="XmlAnnotation_TT_08.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><B>SYMBOL</B></TT></A> <A CLASS="SYMBOL" HREF="#DotOrStar">DotOrStar</A> 
+	| <A CLASS="SYMBOL" HREF="#WrapperPath">WrapperPath</A> <A CLASS="SYMBOL" HREF="XmlAnnotation_TT_08.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><B>SYMBOL</B></TT></A> <A CLASS="SYMBOL" HREF="#DotOrStar">DotOrStar</A> 
+	;
+
+<A CLASS="SYMBOL" NAME="DotOrStar"></A><A CLASS="SYMBOL" HREF="XmlAnnotation_NT_12.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><I>DotOrStar</I></TT></A>
+	: <A CLASS="SYMBOL" HREF="XmlAnnotation_TT_04.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><B>DOT</B></TT></A> 
+	| <A CLASS="SYMBOL" HREF="XmlAnnotation_TT_05.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><B>STAR</B></TT></A> 
+	;
+
+<A CLASS="SYMBOL" NAME="XmlPath_opt"></A><A CLASS="SYMBOL" HREF="XmlAnnotation_NT_10.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><I>XmlPath_opt</I></TT></A>
+	: <SPAN STYLE="COLOR:ORANGE">/* empty */</SPAN>
+	| '<A CLASS="SYMBOL" HREF="XmlAnnotation_TT_21.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><B>[</B></TT></A>' <A CLASS="SYMBOL" HREF="#XmlPath">XmlPath</A> '<A CLASS="SYMBOL" HREF="XmlAnnotation_TT_22.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><B>]</B></TT></A>' 
+	;
+
+<A CLASS="SYMBOL" NAME="XmlPath"></A><A CLASS="SYMBOL" HREF="XmlAnnotation_NT_11.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><I>XmlPath</I></TT></A>
+	: <A CLASS="SYMBOL" HREF="XmlAnnotation_TT_07.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><B>POSITION</B></TT></A> 
+	| <A CLASS="SYMBOL" HREF="#XmlPath">XmlPath</A> <A CLASS="SYMBOL" HREF="XmlAnnotation_TT_04.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><B>DOT</B></TT></A> <A CLASS="SYMBOL" HREF="XmlAnnotation_TT_07.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><B>POSITION</B></TT></A> 
+	;
+
+<A CLASS="SYMBOL" NAME="ChildrenPair"></A><A CLASS="SYMBOL" HREF="XmlAnnotation_NT_23.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><I>ChildrenPair</I></TT></A>
+	: <A CLASS="SYMBOL" HREF="#ChildrenKey">ChildrenKey</A> <A CLASS="SYMBOL" HREF="#ChildrenValue">ChildrenValue</A> 
+	;
+
+<A CLASS="SYMBOL" NAME="ChildrenKey"></A><A CLASS="SYMBOL" HREF="XmlAnnotation_NT_34.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><I>ChildrenKey</I></TT></A>
+	: <A CLASS="SYMBOL" HREF="XmlAnnotation_TT_14.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><B>CHILDREN</B></TT></A> <A CLASS="SYMBOL" HREF="#KeyValSep_opt">KeyValSep_opt</A> 
+	;
+
+<A CLASS="SYMBOL" NAME="ChildrenValue"></A><A CLASS="SYMBOL" HREF="XmlAnnotation_NT_35.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><I>ChildrenValue</I></TT></A>
+	: '<A CLASS="SYMBOL" HREF="XmlAnnotation_TT_19.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><B>(</B></TT></A>' <A CLASS="SYMBOL" HREF="#XmlTreeRefs">XmlTreeRefs</A> '<A CLASS="SYMBOL" HREF="XmlAnnotation_TT_20.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><B>)</B></TT></A>' 
+	;
+
+<A CLASS="SYMBOL" NAME="XmlTreeRefs"></A><A CLASS="SYMBOL" HREF="XmlAnnotation_NT_36.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><I>XmlTreeRefs</I></TT></A>
+	: <A CLASS="SYMBOL" HREF="#XmlTreeRef">XmlTreeRef</A> 
+	| <A CLASS="SYMBOL" HREF="#XmlTreeRefs">XmlTreeRefs</A> <A CLASS="SYMBOL" HREF="#ListSep_opt">ListSep_opt</A> <A CLASS="SYMBOL" HREF="#XmlTreeRef">XmlTreeRef</A> 
+	;
+
+<A CLASS="SYMBOL" NAME="XmlTreeRef"></A><A CLASS="SYMBOL" HREF="XmlAnnotation_NT_06.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><I>XmlTreeRef</I></TT></A>
+	: <A CLASS="SYMBOL" HREF="#XmlChildSpec">XmlChildSpec</A> <A CLASS="SYMBOL" HREF="#AttributeName_opt">AttributeName_opt</A> 
+	;
+
+<A CLASS="SYMBOL" NAME="AttributeName_opt"></A><A CLASS="SYMBOL" HREF="XmlAnnotation_NT_07.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><I>AttributeName_opt</I></TT></A>
+	: <SPAN STYLE="COLOR:ORANGE">/* empty */</SPAN>
+	| <A CLASS="SYMBOL" HREF="#AttributeName">AttributeName</A> 
+	;
+
+<A CLASS="SYMBOL" NAME="KeyValSep_opt"></A><A CLASS="SYMBOL" HREF="XmlAnnotation_NT_26.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><I>KeyValSep_opt</I></TT></A>
+	: <SPAN STYLE="COLOR:ORANGE">/* empty */</SPAN>
+	| <A CLASS="SYMBOL" HREF="XmlAnnotation_TT_16.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><B>KEYVALSEP</B></TT></A> 
+	;
+
+<A CLASS="SYMBOL" NAME="ListSep_opt"></A><A CLASS="SYMBOL" HREF="XmlAnnotation_NT_33.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><I>ListSep_opt</I></TT></A>
+	: <SPAN STYLE="COLOR:ORANGE">/* empty */</SPAN>
+	| <A CLASS="SYMBOL" HREF="XmlAnnotation_TT_15.html" TARGET="MAIN" ONCLICK="opener.focus()"><TT><B>LISTSEP</B></TT></A> 
+	;
+
+</PRE>
+</TD></TR>
+</TABLE>
+</CENTER>
+<P>
+<HR>
+<SPAN STYLE="COLOR:#F07070; FONT-SIZE:XX-SMALL">
+<P ALIGN="RIGHT"><B>Copyright &copy; 2019 by <A HREF="http://www.hassan-ait-kaci.net/">Hassan A&iuml;t-Kaci</A>; All Rights Reserved.</B></SPAN>
+<P ALIGN="RIGHT"><IMG ALIGN="MIDDLE" SRC="images/hlt/hlt-logo.gif" WIDTH="90" HEIGHT="90">
+</BODY>
+</HTML>

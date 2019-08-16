@@ -1,0 +1,216 @@
+// FILE. . . . . /home/hak/hlt/src/hlt/language/syntax/xml/XmlAnnotationParserCode.grm
+// EDIT BY . . . Hassan Ait-Kaci
+// ON MACHINE. . 4j4zn71
+// STARTED ON. . Tue Apr 10 10:51:02 2007
+
+// Last modified on Tue Jun 19 18:05:12 2012 by hak
+
+////////////////////////////////////////////////////////////////////////
+
+%{
+
+  /**
+   * This is the XML namespace prefix for this XML element. It is equal
+   * to <tt>""</tt> by default.
+   */
+  String nsPrefix = "";
+  /**
+   * This the local name of this XML element; <i>i.e.</i>, <i>sans</i>
+   * <tt>nsPrefix</tt>.
+   */
+  String localName = null;
+  /**
+   * The list of attributes/value pairs. It is a list of
+   * <a href="../../XmlAttributeInfo.html"><tt>XmlAttributeInfo</tt></a>'s.
+   */
+  ArrayList attributes = new ArrayList();
+  /**
+   * The list of children. It is a list of <tt>int</tt>'s.
+   */
+  IntArrayList children = new IntArrayList();
+  /**
+   * When <tt>children[i]</tt> has an <tt>xmlPath</tt> specified for it,
+   * it is stored in <tt>xmlPaths[i]</tt> as an <tt>IntArrayList</tt>.
+   * Otherwise, <tt>xmlPaths[i]</tt> is set to null.
+   */
+  ArrayList xmlPaths = new ArrayList();
+  /**
+   * When <tt>children[i]</tt> has a <tt>wrapperPath</tt> specified for it,
+   * it is stored in <tt>wrapperPaths[i]</tt> as an <tt>ArrayList</tt>.
+   * Otherwise, <tt>wrapperPaths[i]</tt> is set to null.
+   */
+  ArrayList wrapperPaths = new ArrayList();
+
+  /**
+   * A reference into a child's XML structure may be that of the string
+   * value of an attribute. The collection of these (possibly
+   * <tt>null</tt>) strings is then stored in an <tt>ArrayList</tt>
+   * called <tt>attributeNames</tt>.
+   */
+  ArrayList attributeNames = new ArrayList();
+
+  /**
+   * A child's XML structure may be that of the string value of a leaf
+   * node (<i>i.e.</i>, of a terminal). Whenever this is the case, then
+   * the number of XML children is always 1 (since there are no possible
+   * siblings). This situation is signalled whenever the flag
+   * <tt>terminalValueFlag</tt> is <tt>true<tt>.
+   */
+  boolean terminalValueFlag = false;
+
+  /**
+   * Where a child specifier is expected, one may use the special form
+   * <tt>&#36;text</tt> to build text content from its arguments which
+   * are either literal (possibly quoted) strings or expressions of the
+   * form <tt>position/attribute</tt> where <tt>position</tt> is an RHS
+   * position and <tt>attribute</tt> is one of its XML element
+   * attribute's name. This information is recorded as an
+   * <tt>ArrayList</tt> of (possibly <tt>null</tt>) <tt>ArrayList</tt>s
+   * of <tt>XmlTextInfo</tt> objects.
+   */
+  ArrayList textInfos = new ArrayList();
+
+  /**
+   * Resets the generated XML annotation parser to its initial state;
+   * <i>i.e.</i>, one in which it is ready to parse a new complete XML
+   * annotation.
+   */
+  private void reset ()
+    {
+      resetParser();
+      nsPrefix = "";
+      localName = null;
+      attributes = new ArrayList();
+      children = new IntArrayList();
+      xmlPaths = new ArrayList();
+      wrapperPaths = new ArrayList();
+      attributeNames = new ArrayList();
+      textInfos = new ArrayList();
+      terminalValueFlag = false;
+    }
+
+  /**
+   * Resets the generated XML annotation parser to its initial state;
+   * <i>i.e.</i>, one in which it is ready to parse the complete XML
+   * annotation given as the specified string, and returns the parser.
+   */
+  public final XmlAnnotationParser reset (String annotation)
+    {
+      reset();
+      ((XmlAnnotationTokenizer)input).setInput(annotation);
+      return this;
+    }
+
+  /**
+   * This returns the <tt>XmlInfo</tt> successfully parsed off the XML
+   * annotation that was fed to this parser.
+   */  
+  public final XmlInfo xmlInfo ()
+    {
+      return new XmlInfo(localName,
+			 nsPrefix,
+			 toAttributeInfoArray(attributes),
+			 children.toArray(),
+			 toIntArrays(xmlPaths),
+			 toWrapperArrays(wrapperPaths),
+			 toStringArray(attributeNames),
+			 terminalValueFlag,
+			 toTextInfoArrays(textInfos));
+    }
+
+  /**
+   * This returns an array of <tt>XmlAttributeInfo</tt> form of the list
+   * of <tt>XmlAttributeInfo</tt>.
+   */  
+  private XmlAttributeInfo[] toAttributeInfoArray (ArrayList list)
+    {
+      int i = 0;
+      XmlAttributeInfo[] a = new XmlAttributeInfo[list.size()];
+
+      for (Iterator it=list.iterator(); it.hasNext();)
+	a[i++] = (XmlAttributeInfo)it.next();
+
+      return a;
+    }
+
+  private int[][] toIntArrays (ArrayList list)
+    {
+      int i = 0;
+      int[][] a = new int[list.size()][];
+
+      for (Iterator it=list.iterator(); it.hasNext();)
+	{
+	  IntArrayList sublist = (IntArrayList)it.next();
+	  a[i++] = (sublist == null ? null : sublist.toArray());
+	}
+
+      return a;
+    }
+
+  private XmlWrapper[][] toWrapperArrays (ArrayList list)
+    {
+      int i = 0;
+      XmlWrapper[][] a = new XmlWrapper[list.size()][];
+
+      for (Iterator it=list.iterator(); it.hasNext();)
+	{
+	  ArrayList sublist = (ArrayList)it.next();
+	  a[i++] = (sublist == null ? null : toWrapperArray(sublist));
+	}
+
+      return a;
+    }
+
+  private String[] toStringArray (ArrayList list)
+    {
+      int i = 0;
+      String[] a = new String[list.size()];
+
+      for (Iterator it=list.iterator(); it.hasNext();)
+	a[i++] = (String)it.next();
+
+      return a;
+    }      
+
+  private XmlWrapper[] toWrapperArray (ArrayList list)
+    {
+      int i = 0;
+      XmlWrapper[] a = new XmlWrapper[list.size()];
+
+      for (Iterator it=list.iterator(); it.hasNext();)
+	a[i++] = (XmlWrapper)it.next();
+
+      return a;
+    }      
+      
+  private XmlTextInfo[][] toTextInfoArrays (ArrayList list)
+    {
+      int i = 0;
+      XmlTextInfo[][] a = new XmlTextInfo[list.size()][];
+
+      for (Iterator it=list.iterator(); it.hasNext();)
+	{
+	  ArrayList sublist = (ArrayList)it.next();
+	  a[i++] = toTextInfoArray(sublist);
+	}
+
+      return a;
+    }
+
+  private XmlTextInfo[] toTextInfoArray (ArrayList list)
+    {
+      if (list == null)
+	return null;
+      
+      int i = 0;
+      XmlTextInfo[] a = new XmlTextInfo[list.size()];
+
+      for (Iterator it=list.iterator(); it.hasNext();)
+	a[i++] = (XmlTextInfo)it.next();
+
+      return a;
+    }
+
+%}
+
+////////////////////////////////////////////////////////////////////////
